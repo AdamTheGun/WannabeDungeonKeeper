@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wannabe Dungeon Keeper</title>
+<script type="text/javascript" src="phaser.min.js"> </script>
+
+<style type="text/css">
+
+body{
+	background-color:#00F;
+	}
+h1{
+	text-align:center;
+	size:24px;
+	color:#000;	
+	}
+#Game{
+	margin-left:auto;
+	margin-right:auto;
+	width:800px;
+	}
+
+</style>
+
+
+
+
+</head>
+
+<body>
+<h1>
+WANNABE DUNGEON KEEPER
+</h1>
+<div id="Game">
+<script type="text/javascript">
+var game = new Phaser.Game(800, 640, Phaser.CANVAS,"Game" ,{ preload: preload, create: create });
+var map;
+var layer;
+
+
+function preload(){
+	game.load.image("dirtblock","x64/DirtBorderStraightBottom.png");
+	game.load.tilemap("dirt-map","Tiles/Dirt-Map.json", null ,Phaser.Tilemap.TILED_JSON);
+	game.load.image("dirt-tiles","x64/DirtFloorSheet.png");
+	}
+	
+function create(){
+	/*for(i = 0;i < 10;i++){
+		for(o = 0;o<10;o++){
+			game.add.sprite((i*64)+80,(o*64),"dirtblock");
+		}
+	}*/
+	map = game.add.tilemap("dirt-map");
+	
+	map.addTilesetImage("DirtFloor","dirt-tiles");
+	
+	layer = map.createLayer("Tile Layer 1");
+	
+	layer.resizeWorld();
+	
+	
+}
+
+</script>
+</div>
+
+
+
+
+
+
+
+
+</body>
+</html>

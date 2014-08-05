@@ -1,0 +1,39 @@
+{ "height":10,
+ "layers":[
+        {
+         "data":[11, 7, 16, 16, 9, 11, 11, 7, 9, 11, 11, 6, 11, 11, 6, 11, 11, 6, 6, 11, 11, 6, 11, 11, 1, 16, 16, 3, 1, 9, 11, 1, 16, 16, 16, 16, 16, 16, 9, 6, 11, 11, 11, 11, 11, 11, 11, 11, 6, 6, 11, 7, 16, 16, 16, 9, 11, 11, 6, 6, 11, 6, 11, 11, 11, 6, 11, 7, 10, 6, 11, 6, 11, 14, 11, 1, 16, 2, 3, 6, 11, 6, 11, 6, 11, 11, 11, 11, 11, 6, 11, 6, 11, 1, 16, 16, 16, 16, 16, 3],
+         "height":10,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":10,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+
+    },
+ "tileheight":64,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/x64\/DirtFloorSheet.png",
+         "imageheight":192,
+         "imagewidth":384,
+         "margin":0,
+         "name":"DirtFloor",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":64,
+         "tilewidth":64
+        }],
+ "tilewidth":64,
+ "version":1,
+ "width":10
+}
