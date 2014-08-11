@@ -1,0 +1,54 @@
+{ "height":8,
+ "layers":[
+        {
+         "data":[3, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 2],
+         "height":8,
+         "name":"UILayer",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":7,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+
+    },
+ "tileheight":80,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/x64\/UI\/Dirt-UI-Right.png",
+         "imageheight":160,
+         "imagewidth":128,
+         "margin":0,
+         "name":"Dirt-UI-Right",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":80,
+         "tilewidth":128
+        }, 
+        {
+         "firstgid":3,
+         "image":"..\/x64\/UI\/Dirt-UI-Left.png",
+         "imageheight":160,
+         "imagewidth":128,
+         "margin":0,
+         "name":"Dirt-UI-Left",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":80,
+         "tilewidth":128
+        }],
+ "tilewidth":128,
+ "version":1,
+ "width":7
+}

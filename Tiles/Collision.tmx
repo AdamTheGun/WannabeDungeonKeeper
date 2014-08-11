@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="14" height="10" tilewidth="64" tileheight="64">
+ <tileset firstgid="1" name="Black-Collision" tilewidth="64" tileheight="64">
+  <image source="../x64/Black-Collision.png" width="64" height="64"/>
+ </tileset>
+ <layer name="Collisions-DirtMap1" width="14" height="10" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYIRidIAuzogDo6slVx82gEsfIYDLTnxuIcU+YvVh4xPjP1zqSdFHyD343IXLPgBdoABT
+  </data>
+ </layer>
+ <layer name="Collisions-DirtMap2" width="14" height="10" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjYIAARigmFYzqG1n6ABl4ABU=
+  </data>
+ </layer>
+</map>
