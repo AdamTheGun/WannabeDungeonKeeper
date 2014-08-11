@@ -1,22 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="10" height="10" tilewidth="64" tileheight="64">
  <tileset firstgid="1" source="Dirt_Map.tsx"/>
- <tileset firstgid="19" name="Black-Collision" tilewidth="64" tileheight="64">
-  <image source="../x64/Black-Collision.png" width="64" height="64"/>
-  <tile id="0">
-   <properties>
-    <property name="Collidable" value="True"/>
-   </properties>
-  </tile>
- </tileset>
  <layer name="Cave-Floor" width="10" height="10">
   <data encoding="base64" compression="zlib">
    eJx9j8EKACAIQ60gMSH6/6/NwIMM7fBA2ZyqRMTGccRQh6Gfn7rSWsge3kuiIQI5FXE3JxmZD3Pj/Ep8G+7t/gv6qntRr/5+mRcXSQPi
-  </data>
- </layer>
- <layer name="Collisions" width="10" height="10">
-  <data encoding="base64" compression="zlib">
-   eJwTZsAEwlCMjY+LTUgOmx3EAGECmJB5uNShm4GuH10cn/m4zMVmPiF/AwCKDgMf
   </data>
  </layer>
 </map>
