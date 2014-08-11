@@ -10,6 +10,17 @@
          "width":10,
          "x":0,
          "y":0
+        }, 
+        {
+         "data":[19, 0, 0, 0, 0, 19, 19, 0, 0, 19, 19, 0, 19, 19, 0, 19, 19, 0, 0, 19, 19, 0, 19, 19, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 19, 19, 19, 19, 19, 19, 19, 0, 0, 19, 0, 0, 0, 0, 0, 19, 19, 0, 0, 19, 0, 19, 19, 19, 0, 19, 0, 0, 0, 19, 0, 19, 0, 19, 0, 0, 0, 0, 0, 19, 0, 19, 0, 19, 19, 19, 19, 19, 0, 19, 0, 19, 0, 0, 0, 0, 0, 0, 0],
+         "height":10,
+         "name":"Collisions",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":10,
+         "x":0,
+         "y":0
         }],
  "orientation":"orthogonal",
  "properties":
@@ -31,6 +42,28 @@
             },
          "spacing":0,
          "tileheight":64,
+         "tilewidth":64
+        }, 
+        {
+         "firstgid":19,
+         "image":"..\/x64\/Black-Collision.png",
+         "imageheight":64,
+         "imagewidth":64,
+         "margin":0,
+         "name":"Black-Collision",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":64,
+         "tileproperties":
+            {
+             "0":
+                {
+                 "Collidable":"True"
+                }
+            },
          "tilewidth":64
         }],
  "tilewidth":64,
