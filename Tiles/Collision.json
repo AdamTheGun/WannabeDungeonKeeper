@@ -33,7 +33,7 @@
          "firstgid":1,
          "image":"..\/x64\/Black-Collision.png",
          "imageheight":64,
-         "imagewidth":64,
+         "imagewidth":128,
          "margin":0,
          "name":"Black-Collision",
          "properties":
