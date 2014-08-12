@@ -44,6 +44,7 @@ var enemySprite;
 var happy_wall_sprite;
 var Eel_Trap_Sprite;
 var Bamboo_Spear_Trap_Sprite;
+var Ferret_Sorcerer_Sprite;
 var tileX = 4;
 var tileY = 4;
 
@@ -59,6 +60,7 @@ function preload(){
 	game.load.spritesheet("Happy-Wall","x64/HappyWallSheet.png", 64,64,12);
 	game.load.spritesheet("Eel_Trap","x64/Eel-Trap-Spritesheet.png", 64,64,7);
 	game.load.spritesheet("Bamboo_Spear","x64/BambooSpearTrapSheet.png", 64,64,12);
+	game.load.spritesheet("Ferret_Sorcerer","x64/Ferret-Walking-SpriteSheet.png",32,32,4);
 
 	}
 	
@@ -91,11 +93,13 @@ function create(){
 	enemySprite = game.add.sprite(200,200,"Proto-Enemy");
 	enemySprite.anchor.setTo(0.5,0.5);
 	
-	game.physics.enable(enemySprite);
+	
 //	game.camera.follow(sprite);
 
-	game.physics.arcade.collide(enemySprite,CollisionLayer);
+//	game.physics.arcade.collide(enemySprite,CollisionLayer);
 
+	CollisionMap.setCollision(1);
+	
 	happy_wall_sprite = game.add.sprite((64*tileX) + 128,64*tileY,"Happy-Wall");
 	happy_wall_sprite.angle = 90;
 	happy_wall_sprite.animations.add("Wall-Smash");
@@ -111,6 +115,14 @@ function create(){
 	Bamboo_Spear_Trap_Sprite.animations.add("Bamboo-Lunge");
 	Bamboo_Spear_Trap_Sprite.animations.play("Bamboo-Lunge",10,true);
 	
+	Ferret_Sorcerer_Sprite = game.add.sprite((64*4)-32,(64*10)-32,"Ferret_Sorcerer");
+	Ferret_Sorcerer_Sprite.animations.add("Ferret_Walking");
+	Ferret_Sorcerer_Sprite.angle = 180;
+	Ferret_Sorcerer_Sprite.anchor.setTo(0.5,0.5);
+	
+	game.physics.enable(enemySprite);
+	game.physics.enable(Ferret_Sorcerer_Sprite);
+	
 	cursors = game.input.keyboard.createCursorKeys();
 
     //game.input.onDown.add(fillTiles, this);
@@ -118,7 +130,8 @@ function create(){
 }
 function update()
 {
-	game.physics.arcade.collide(enemySprite, Cavelayer);
+	game.physics.arcade.collide(enemySprite, CollisionLayer);
+	game.physics.arcade.collide(Ferret_Sorcerer_Sprite, CollisionLayer);
 
 	enemySprite.body.velocity.x = 0;
 	enemySprite.body.velocity.y = 0;
@@ -136,6 +149,13 @@ function update()
     {
         enemySprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(enemySprite.angle, 300));
     }
+	
+	Ferret_Sorcerer_Sprite.body.velocity.y = -50;
+	
+	if(Ferret_Sorcerer_Sprite.body.velocity.x > 0 || Ferret_Sorcerer_Sprite.body.velocity.y > 0 || Ferret_Sorcerer_Sprite.body.velocity.x < 0 || Ferret_Sorcerer_Sprite.body.velocity.y < 0 )
+	{
+		Ferret_Sorcerer_Sprite.animations.play("Ferret_Walking",8,true);
+	}
 }
 
 function render()
