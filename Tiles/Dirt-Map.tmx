@@ -3,7 +3,7 @@
  <tileset firstgid="1" source="Dirt_Map.tsx"/>
  <layer name="Cave-Floor" width="14" height="10">
   <data encoding="base64" compression="zlib">
-   eJyNkIEKwCAIRK3AcIOx///aigyOY7mEAxWf4onMuLtq1+sy763+qjlGT2GWcz3kEtwuXtuGw1mW+d4vLpIGHPrC3kQc/of12HcdcA/9m2V688fxXbwfcTtfC8w3T4AD4g==
+   eJxjYIAAbiIxOkCXZwViASTMSaQ+dMxGQ33saG4EYWYi9LEx4LYXnz5GLPYNxnAhRh8AwkAERg==
   </data>
  </layer>
 </map>
