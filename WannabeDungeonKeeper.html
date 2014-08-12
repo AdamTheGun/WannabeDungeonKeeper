@@ -62,6 +62,18 @@ var Goblin_Sprite;
 var tileX = 4;
 var tileY = 4;
 
+var movementIndex = 0;
+
+var mapOneWaypointsX = [10, 5, 5, 10, 10, 6, 6];
+var mapOneWaypointsY = [6, 6, 4, 4, 1, 1, 1];
+
+var direction = [0,3,0,1,0,3,4]; // Next valid direction 0 - North ; 1 - East ; 2 - South ; 3 - West ; 4 - Reached treasure room
+var mapOneAngle = [180, 90, 180, 270, 180, 90, 90];
+var mapOneMovementX = [0, -100, 0, 100, 0, -100, 0];
+var mapOneMovementY = [-100, 0, -100, 0, -100, 0, 0];
+
+var errorCheck = 0;
+
 function preload(){
 	game.load.tilemap("dirt-map","Tiles/Dirt-Map.json", null ,Phaser.Tilemap.TILED_JSON);
 	game.load.tilemap("inGameUI","Tiles/Game-UI.json",null,Phaser.Tilemap.TILED_JSON);
@@ -141,7 +153,7 @@ function create(){
 	
 	Ferret_Sorcerer_Sprite = game.add.sprite((64*11)-32,(64*10)-32,"Ferret_Sorcerer");
 	Ferret_Sorcerer_Sprite.animations.add("Ferret_Walking");
-	Ferret_Sorcerer_Sprite.angle = 180;
+	Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
 	Ferret_Sorcerer_Sprite.anchor.setTo(0.5,0.5);
 	
 	Goblin_Sprite = game.add.sprite(500,100,"GoblinIdle");
@@ -184,27 +196,96 @@ function update()
         enemySprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(enemySprite.angle, 300));
     }
 	
-	Ferret_Sorcerer_Sprite.body.velocity.y = -50;
+	Ferret_Sorcerer_Sprite.body.velocity.x = mapOneMovementX[movementIndex];
+	Ferret_Sorcerer_Sprite.body.velocity.y = mapOneMovementY[movementIndex];
 	
 	if(Ferret_Sorcerer_Sprite.body.velocity.x > 0 || Ferret_Sorcerer_Sprite.body.velocity.y > 0 || Ferret_Sorcerer_Sprite.body.velocity.x < 0 || Ferret_Sorcerer_Sprite.body.velocity.y < 0 )
 	{
 		Ferret_Sorcerer_Sprite.animations.play("Ferret_Walking",8,true);
 	}
 	
-
+	if(direction[movementIndex] != 4)
+	{
+		checkWaypoint();
+	}
 }
 
 function render()
 {
 	game.debug.text('Tile X: ' + Cavelayer.getTileX(enemySprite.x), 32, 48, 'rgb(255,255,255)');
     game.debug.text('Tile Y: ' + Cavelayer.getTileY(enemySprite.y), 32, 64, 'rgb(255,255,255)');
-
-
+	
+    game.debug.text('Movement: ' + movementIndex, 32, 96, 'rgb(255,255,255)');
+	
+    game.debug.text('Ferret X: ' + Cavelayer.getTileX(Ferret_Sorcerer_Sprite.x), 32, 112, 'rgb(255,255,255)');
+    game.debug.text('Ferret Y: ' + Cavelayer.getTileY(Ferret_Sorcerer_Sprite.y), 32, 128, 'rgb(255,255,255)');
+	
+    game.debug.text('Speed X: ' + mapOneMovementX[movementIndex], 32, 144, 'rgb(255,255,255)');
+    game.debug.text('Speed Y: ' + mapOneMovementY[movementIndex], 32, 160, 'rgb(255,255,255)');
+    game.debug.text('Waypoint X: ' + mapOneWaypointsX[movementIndex], 32, 176, 'rgb(255,255,255)');
+    game.debug.text('Waypoint Y: ' + mapOneWaypointsY[movementIndex], 32, 192, 'rgb(255,255,255)');
+	
+    game.debug.text('Sprite Direction: ' + Ferret_Sorcerer_Sprite.angle, 32, 206, 'rgb(255,255,255)');
+    game.debug.text('Intended Direction: ' + mapOneAngle[movementIndex], 32, 222, 'rgb(255,255,255)');
+	
+    game.debug.text('F X: ' + Ferret_Sorcerer_Sprite.x, 32, 238, 'rgb(255,255,255)');
+    game.debug.text('F Y: ' + Ferret_Sorcerer_Sprite.y, 32, 254, 'rgb(255,255,255)');
+    game.debug.text('Pos X: ' + (mapOneWaypointsX[movementIndex] * 64 + 32), 32, 270, 'rgb(255,255,255)');
+    game.debug.text('Pos Y: ' + (mapOneWaypointsY[movementIndex] * 64 + 32), 32, 286, 'rgb(255,255,255)');
+    game.debug.text('Previous direction: ' + direction[movementIndex], 32, 302, 'rgb(255,255,255)');
+	
+	game.debug.text('Error Checkpoint: ' + errorCheck, 32, 318, 'rgb(255,255,255)');
 }
 
-
-
-
+function checkWaypoint()
+{
+	if(Cavelayer.getTileX(Ferret_Sorcerer_Sprite.x) == mapOneWaypointsX[movementIndex])
+	{
+		if(Cavelayer.getTileY(Ferret_Sorcerer_Sprite.y) == mapOneWaypointsY[movementIndex])
+		{
+			if(direction[movementIndex] == 0)
+			{
+				if(Ferret_Sorcerer_Sprite.y <= mapOneWaypointsY[movementIndex] * 64 + 32)
+				{
+					movementIndex++;
+					Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
+				}
+			}
+			else if(direction[movementIndex] == 1)
+			{
+				if(Ferret_Sorcerer_Sprite.x >= mapOneWaypointsX[movementIndex] * 64 + 32)
+				{
+					movementIndex++;
+					Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
+				}
+			}
+			else if(direction[movementIndex] == 2)
+			{
+				if(Ferret_Sorcerer_Sprite.y >= mapOneWaypointsY[movementIndex] * 64 + 32)
+				{
+					movementIndex++;
+					Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
+				}
+			}
+			else if(direction[movementIndex] == 3)
+			{
+				if(Ferret_Sorcerer_Sprite.x <= mapOneWaypointsX[movementIndex] * 64 + 32)
+				{
+					movementIndex++;
+					Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
+				}
+			}
+			else if(direction[movementIndex] == 4)
+			{
+				if(Ferret_Sorcerer_Sprite.x <= mapOneWaypointsX[movementIndex] * 64 + 32)
+				{
+					movementIndex++;
+					Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
+				}
+			}
+		}
+	}
+}
 </script>
 </div>
 
