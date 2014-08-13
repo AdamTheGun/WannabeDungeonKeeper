@@ -35,6 +35,9 @@ WANNABE DUNGEON KEEPER
 <script type="text/javascript">
 var game = new Phaser.Game(896, 640, Phaser.CANVAS,"Game" ,{ preload: preload, create: create, update: update, render: render });
 
+var marker;
+var cursors;
+
 <!-- TileMaps Start-->
 var Floormap;
 var UIMap;
@@ -158,10 +161,18 @@ function create(){
 	cursors = game.input.keyboard.createCursorKeys();
 
     //game.input.onDown.add(fillTiles, this);
-
+	
+	marker = game.add.graphics();
+	marker.lineStyle(2, 0x000000, 0.3);
+	marker.drawRect(0,0, 64, 64);
+	
+	cursors = game.input.keyboard.createCursorKeys();
 }
 function update()
 {
+	marker.x = Cavelayer.getTileX(game.input.activePointer.worldX) * 64;
+	marker.y = Cavelayer.getTileX(game.input.activePointer.worldY) * 64;
+	
 	game.physics.arcade.collide(enemySprite, CollisionLayer);
 	game.physics.arcade.collide(Ferret_Sorcerer_Sprite, CollisionLayer);
 
