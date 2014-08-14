@@ -61,6 +61,12 @@ var Bamboo_Spear_Trap_Sprite;
 var Ferret_Sorcerer_Sprite;
 var Goblin_Sprite;
 
+var happy_wall_group;
+var Eel_Trap_group;
+var Bamboo_Spear_Trap_group;
+var Ferret_Sorcerer_group;
+var Goblin_Sprite_group;
+
 <!-- Sprites END-->
 
 var tileX = 4;
@@ -88,10 +94,8 @@ function preload(){
 	game.load.image("Proto-Enemy","x64/Proto-Enemy.png");
 	game.load.image("UI-Left","x64/UI/Dirt-UI-Left.png");
 	game.load.image("UI-Right","x64/UI/Dirt-UI-Right.png");
-	game.load.image("GoblinIdle","x64/Idles/Goblin-Idle.png");
 	
-	game.load.spritesheet("GoblinWalking","x64/GoblinWalking.png",52,52,4);
-	game.load.spritesheet("GoblinSwordSwing","x64/GoblinSwordSwing.png",52,52,4);
+	game.load.spritesheet("Goblin","x64/Goblin.png",52,52,8);
 	game.load.spritesheet("Happy-Wall","x64/HappyWallSheet.png", 64,64,12);
 	game.load.spritesheet("Eel_Trap","x64/Eel-Trap-Spritesheet.png", 64,64,7);
 	game.load.spritesheet("Bamboo_Spear","x64/BambooSpearTrapSheet.png", 64,64,12);
@@ -154,16 +158,17 @@ function create(){
 	Bamboo_Spear_Trap_Sprite.animations.add("Bamboo-Lunge");
 	Bamboo_Spear_Trap_Sprite.animations.play("Bamboo-Lunge",10,true);
 	
-	Ferret_Sorcerer_Sprite = game.add.sprite((64*11)-32,(64*10)-32,"Ferret_Sorcerer");
+	Ferret_Sorcerer_Sprite = game.add.sprite(500,100,"Ferret_Sorcerer");
 	Ferret_Sorcerer_Sprite.animations.add("Ferret_Walking");
-	Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
 	Ferret_Sorcerer_Sprite.anchor.setTo(0.5,0.5);
 	
-	Goblin_Sprite = game.add.sprite(500,100,"GoblinIdle");
+	Goblin_Sprite = game.add.sprite((64*11)-32,(64*10)-32,"Goblin");
 	Goblin_Sprite.anchor.setTo(0.5,0.5);
-	Goblin_Sprite.animations.add("GoblinWalking");
-	Goblin_Sprite.animations.add("GoblinSwordSwing");
-	//Goblin_Sprite.animations.play("GoblinSwordSwing",8,true);
+	Goblin_Sprite.angle = mapOneAngle[movementIndex];
+	Goblin_Sprite.scale.x = 0.8;
+	Goblin_Sprite.scale.y = 0.8;
+	Goblin_Sprite.animations.add("GoblinWalk", [0,1,2,3], 4, true);
+	Goblin_Sprite.animations.add("GoblinSwordSwing", [4,5,6,7], 4, false);
 	
 	happy_wall_sprite = game.add.sprite((64*(tileX - 1)) + 32,64*(tileY + 4) + 32,"Happy-Wall");
 	happy_wall_sprite.anchor.setTo(0.5,0.5);
@@ -172,6 +177,8 @@ function create(){
 	Bamboo_Spear_Trap_Sprite.anchor.setTo(0.5,0.5);
 	
 	Eel_Trap_Sprite = game.add.sprite((64*(tileX + 3)) + 32 , 64*(tileY + 4) + 32,"Eel_Trap");
+	Eel_Trap_Sprite.scale.x = 0.8;
+	Eel_Trap_Sprite.scale.y = 0.8;
 	Eel_Trap_Sprite.anchor.setTo(0.5,0.5);
 
 	game.physics.enable(enemySprite);
@@ -187,6 +194,16 @@ function create(){
 	marker.drawRect(0,0, 64, 64);
 	
 	cursors = game.input.keyboard.createCursorKeys();
+	
+	happy_wall_group = game.add.group();
+	Eel_Trap_group = game.add.group();
+	Bamboo_Spear_Trap_group = game.add.group();
+	Ferret_Sorcerer_group = game.add.group();
+	Goblin_Sprite_group = game.add.group();
+	
+	Ferret_Sorcerer_group.add(Ferret_Sorcerer_Sprite);
+	Goblin_Sprite_group.add(Goblin_Sprite);
+	
 }
 function update()
 {
@@ -211,34 +228,56 @@ function update()
 		}
 		else
 		{
+			
 			if(currentTrap == 1)
 			{
+				var happy_wall_sprite;
 				happy_wall_sprite = game.add.sprite((64*(Cavelayer.getTileX(marker.x))) + 32,64*(Cavelayer.getTileY(marker.y)) + 32,"Happy-Wall");
 				happy_wall_sprite.anchor.setTo(0.5,0.5);
 				happy_wall_sprite.angle = 0;
 				happy_wall_sprite.animations.add("Wall-Smash");
-				happy_wall_sprite.animations.play("Wall-Smash",15,true);
+				happy_wall_group.add(happy_wall_sprite);
+				//happy_wall_sprite.animations.play("Wall-Smash",15,true);
 			}
 			else if(currentTrap == 2)
 			{
-				Bamboo_Spear_Trap_Sprite = game.add.sprite((64*(Cavelayer.getTileX(marker.x)))+ 32,64*(Cavelayer.getTileY(marker.y))+ 32,"Bamboo_Spear");
+				var Bamboo_Spear_Trap_Sprite;
+				Bamboo_Spear_Trap_Sprite = game.add.sprite((64*(Cavelayer.getTileX(marker.x)))+ 32,64*(Cavelayer.getTileY(marker.y))+ 32,"Bamboo_Spear")
 				Bamboo_Spear_Trap_Sprite.anchor.setTo(0.5,0.5);
 				Bamboo_Spear_Trap_Sprite.angle = 0;
 				Bamboo_Spear_Trap_Sprite.animations.add("Bamboo-Lunge");
-				Bamboo_Spear_Trap_Sprite.animations.play("Bamboo-Lunge",10,true);
+				Bamboo_Spear_Trap_group.add(Bamboo_Spear_Trap_Sprite);
+				//Bamboo_Spear_Trap_Sprite.animations.play("Bamboo-Lunge",10,true);
 			}
 			else if(currentTrap == 3)
 			{
+				var Eel_Trap_Sprite;
 				Eel_Trap_Sprite = game.add.sprite((64*(Cavelayer.getTileX(marker.x))) + 32,64*(Cavelayer.getTileY(marker.y)) + 32,"Eel_Trap");
 				Eel_Trap_Sprite.anchor.setTo(0.5,0.5);
 				Eel_Trap_Sprite.animations.add("Idle-Trap");
-				Eel_Trap_Sprite.animations.play("Idle-Trap",10,true);
+				Eel_Trap_group.add(Eel_Trap_Sprite);
+				Eel_Trap_Sprite.scale.x = 0.8;
+				Eel_Trap_Sprite.scale.y = 0.8;
+				//Eel_Trap_Sprite.animations.play("Idle-Trap",10,true);
 			}
 		}
 	}
 	
+	for(var i = 0;i<Eel_Trap_group.countLiving();i++)
+	{
+		for(var o = 0;o<Goblin_Sprite_group.countLiving();o++){
+			if(Cavelayer.getTileX(Eel_Trap_group.getAt(i)) == Cavelayer.getTileX(Goblin_Sprite_group.getAt(o)))
+			{
+				Goblin_Sprite_group.getAt(o).parent.removeChild(Goblin_Sprite_group.getAt(o));	
+			}
+		}
+		
+	}
+
+	
+	
 	game.physics.arcade.collide(enemySprite, CollisionLayer);
-	game.physics.arcade.collide(Ferret_Sorcerer_Sprite, CollisionLayer);
+	game.physics.arcade.collide(Goblin_Sprite, CollisionLayer);
 
 	enemySprite.body.velocity.x = 0;
 	enemySprite.body.velocity.y = 0;
@@ -246,7 +285,7 @@ function update()
 	 if (cursors.left.isDown)
     {
         enemySprite.body.angularVelocity = -200;
-		Goblin_Sprite.animations.play("GoblinWalking",8,false);
+		Goblin_Sprite.animations.play("GoblinWalk",8,false);
     }
     else if (cursors.right.isDown)
     {
@@ -259,17 +298,17 @@ function update()
         enemySprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(enemySprite.angle, 300));
     }
 	
-	Ferret_Sorcerer_Sprite.body.velocity.x = mapOneMovementX[movementIndex];
-	Ferret_Sorcerer_Sprite.body.velocity.y = mapOneMovementY[movementIndex];
+	Goblin_Sprite.body.velocity.x = mapOneMovementX[movementIndex];
+	Goblin_Sprite.body.velocity.y = mapOneMovementY[movementIndex];
 	
-	if(Ferret_Sorcerer_Sprite.body.velocity.x > 0 || Ferret_Sorcerer_Sprite.body.velocity.y > 0 || Ferret_Sorcerer_Sprite.body.velocity.x < 0 || Ferret_Sorcerer_Sprite.body.velocity.y < 0 )
+	if(Goblin_Sprite.body.velocity.x > 0 || Goblin_Sprite.body.velocity.y > 0 || Goblin_Sprite.body.velocity.x < 0 || Goblin_Sprite.body.velocity.y < 0 )
 	{
-		Ferret_Sorcerer_Sprite.animations.play("Ferret_Walking",8,true);
+		Goblin_Sprite.animations.play("GoblinWalk",8,true);
 	}
 	
 	if(direction[movementIndex] != 4)
 	{
-		checkWaypoint();
+		checkWaypoint(Goblin_Sprite);
 	}
 }
 
@@ -302,55 +341,57 @@ function render()
 	game.debug.text('Current trap: ' + currentTrap, 32, 334, 'rgb(255,255,255)');
 }
 
-function checkWaypoint()
+function checkWaypoint(sprite)
 {
-	if(Cavelayer.getTileX(Ferret_Sorcerer_Sprite.x) == mapOneWaypointsX[movementIndex])
+	if(Cavelayer.getTileX(sprite.x) == mapOneWaypointsX[movementIndex])
 	{
-		if(Cavelayer.getTileY(Ferret_Sorcerer_Sprite.y) == mapOneWaypointsY[movementIndex])
+		if(Cavelayer.getTileY(sprite.y) == mapOneWaypointsY[movementIndex])
 		{
 			if(direction[movementIndex] == 0)
 			{
-				if(Ferret_Sorcerer_Sprite.y <= mapOneWaypointsY[movementIndex] * 64 + 32)
+				if(sprite.y <= mapOneWaypointsY[movementIndex] * 64 + 32)
 				{
 					movementIndex++;
-					Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
+					sprite.angle = mapOneAngle[movementIndex];
 				}
 			}
 			else if(direction[movementIndex] == 1)
 			{
-				if(Ferret_Sorcerer_Sprite.x >= mapOneWaypointsX[movementIndex] * 64 + 32)
+				if(sprite.x >= mapOneWaypointsX[movementIndex] * 64 + 32)
 				{
 					movementIndex++;
-					Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
+					sprite.angle = mapOneAngle[movementIndex];
 				}
 			}
 			else if(direction[movementIndex] == 2)
 			{
-				if(Ferret_Sorcerer_Sprite.y >= mapOneWaypointsY[movementIndex] * 64 + 32)
+				if(sprite.y >= mapOneWaypointsY[movementIndex] * 64 + 32)
 				{
 					movementIndex++;
-					Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
+					sprite.angle = mapOneAngle[movementIndex];
 				}
 			}
 			else if(direction[movementIndex] == 3)
 			{
-				if(Ferret_Sorcerer_Sprite.x <= mapOneWaypointsX[movementIndex] * 64 + 32)
+				if(sprite.x <= mapOneWaypointsX[movementIndex] * 64 + 32)
 				{
 					movementIndex++;
-					Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
+					sprite.angle = mapOneAngle[movementIndex];
 				}
 			}
 			else if(direction[movementIndex] == 4)
 			{
-				if(Ferret_Sorcerer_Sprite.x <= mapOneWaypointsX[movementIndex] * 64 + 32)
+				if(sprite.x <= mapOneWaypointsX[movementIndex] * 64 + 32)
 				{
 					movementIndex++;
-					Ferret_Sorcerer_Sprite.angle = mapOneAngle[movementIndex];
+					sprites.angle = mapOneAngle[movementIndex];
 				}
 			}
 		}
 	}
 }
+
+
 </script>
 </div>
 
