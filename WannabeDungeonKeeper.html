@@ -95,7 +95,7 @@ function preload(){
 	game.load.image("UI-Left","x64/UI/Dirt-UI-Left.png");
 	game.load.image("UI-Right","x64/UI/Dirt-UI-Right.png");
 	
-	game.load.spritesheet("Goblin","x64/Goblin.png",52,52,8);
+	game.load.spritesheet("Goblin","x64/Goblin.png",52,52,16);
 	game.load.spritesheet("Happy-Wall","x64/HappyWallSheet.png", 64,64,12);
 	game.load.spritesheet("Eel_Trap","x64/Eel-Trap-Spritesheet.png", 64,64,7);
 	game.load.spritesheet("Bamboo_Spear","x64/BambooSpearTrapSheet.png", 64,64,12);
@@ -169,6 +169,7 @@ function create(){
 	Goblin_Sprite.scale.y = 0.8;
 	Goblin_Sprite.animations.add("GoblinWalk", [0,1,2,3], 4, true);
 	Goblin_Sprite.animations.add("GoblinSwordSwing", [4,5,6,7], 4, false);
+	Goblin_Sprite.animations.add("GoblinHit",[8,9,10,11,12,13,14,15],12,false);
 	
 	happy_wall_sprite = game.add.sprite((64*(tileX - 1)) + 32,64*(tileY + 4) + 32,"Happy-Wall");
 	happy_wall_sprite.anchor.setTo(0.5,0.5);
@@ -231,7 +232,7 @@ function update()
 			
 			if(currentTrap == 1)
 			{
-				var happy_wall_sprite;
+				
 				happy_wall_sprite = game.add.sprite((64*(Cavelayer.getTileX(marker.x))) + 32,64*(Cavelayer.getTileY(marker.y)) + 32,"Happy-Wall");
 				happy_wall_sprite.anchor.setTo(0.5,0.5);
 				happy_wall_sprite.angle = 0;
@@ -285,7 +286,7 @@ function update()
 	 if (cursors.left.isDown)
     {
         enemySprite.body.angularVelocity = -200;
-		Goblin_Sprite.animations.play("GoblinWalk",8,false);
+		Goblin_Sprite.animations.play("GoblinHit",16,false);
     }
     else if (cursors.right.isDown)
     {
@@ -319,8 +320,8 @@ function render()
 	
     game.debug.text('Movement: ' + movementIndex, 32, 96, 'rgb(255,255,255)');
 	
-    game.debug.text('Ferret X: ' + Cavelayer.getTileX(Ferret_Sorcerer_Sprite.x), 32, 112, 'rgb(255,255,255)');
-    game.debug.text('Ferret Y: ' + Cavelayer.getTileY(Ferret_Sorcerer_Sprite.y), 32, 128, 'rgb(255,255,255)');
+    game.debug.text('Goblin X: ' + Goblin_Sprite.x, 32, 112, 'rgb(255,255,255)');
+    game.debug.text('Goblin Y: ' + Goblin_Sprite.y, 32, 128, 'rgb(255,255,255)');
 	
     game.debug.text('Speed X: ' + mapOneMovementX[movementIndex], 32, 144, 'rgb(255,255,255)');
     game.debug.text('Speed Y: ' + mapOneMovementY[movementIndex], 32, 160, 'rgb(255,255,255)');
