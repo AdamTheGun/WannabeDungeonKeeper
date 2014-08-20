@@ -38,6 +38,7 @@ var game = new Phaser.Game(896, 640, Phaser.CANVAS,"Game" ,{ preload: preload, c
 var marker;
 var cursors;
 var currentTrap = 0;
+var trapArray = new Array();
 
 <!-- TileMaps Start-->
 var Floormap;
@@ -136,23 +137,12 @@ function create(){
 //	game.physics.arcade.collide(enemySprite,CollisionLayer);
 
 	CollisionMap.setCollision(1);
-	
-	happy_wall_sprite = game.add.sprite((64*(tileX+1)) + 160,64*(tileY+1)-32,"Happy-Wall");
-	happy_wall_sprite.anchor.setTo(0.5,0.5);
-	happy_wall_sprite.angle = 0;
-	happy_wall_sprite.animations.add("Wall-Smash");
-	happy_wall_sprite.animations.play("Wall-Smash",15,true);
 
-	Eel_Trap_Sprite = game.add.sprite((64*(tileX+2))+160,64*(tileY+3)-32,"Eel_Trap");
-	Eel_Trap_Sprite.anchor.setTo(0.5,0.5);
-	Eel_Trap_Sprite.animations.add("Idle-Trap");
-	Eel_Trap_Sprite.animations.play("Idle-Trap",10,true);
+	createHappyWallTrap(7, 4);
 	
-	Bamboo_Spear_Trap_Sprite = game.add.sprite((64*(tileX + 2))+ 32,64*(tileY)+ 32,"Bamboo_Spear");
-	Bamboo_Spear_Trap_Sprite.anchor.setTo(0.5,0.5);
-	Bamboo_Spear_Trap_Sprite.angle = 0;
-	Bamboo_Spear_Trap_Sprite.animations.add("Bamboo-Lunge");
-	Bamboo_Spear_Trap_Sprite.animations.play("Bamboo-Lunge",10,true);
+	createBambooSpearTrap(6, 4);
+
+	createEelTrap(8, 6);
 	
 	Ferret_Sorcerer_Sprite = game.add.sprite((64*11)-32,(64*10)-32,"Ferret_Sorcerer");
 	Ferret_Sorcerer_Sprite.animations.add("Ferret_Walking");
@@ -190,7 +180,7 @@ function create(){
 }
 function update()
 {
-	game.physics.arcade.collide(currentTrap, CollisionMap);
+	game.physics.arcade.collide(happy_wall_sprite, Bamboo_Spear_Trap_Sprite);
 	
 	marker.x = Cavelayer.getTileX(game.input.activePointer.worldX) * 64;
 	marker.y = Cavelayer.getTileY(game.input.activePointer.worldY) * 64;
@@ -211,28 +201,17 @@ function update()
 		}
 		else
 		{
-			if(currentTrap == 1)
+			if(currentTrap == 1 && checkMapOverlap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)))
 			{
-				happy_wall_sprite = game.add.sprite((64*(Cavelayer.getTileX(marker.x))) + 32,64*(Cavelayer.getTileY(marker.y)) + 32,"Happy-Wall");
-				happy_wall_sprite.anchor.setTo(0.5,0.5);
-				happy_wall_sprite.angle = 0;
-				happy_wall_sprite.animations.add("Wall-Smash");
-				happy_wall_sprite.animations.play("Wall-Smash",15,true);
+				createHappyWallTrap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y));
 			}
-			else if(currentTrap == 2)
+			else if(currentTrap == 2 && checkMapOverlap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)))
 			{
-				Bamboo_Spear_Trap_Sprite = game.add.sprite((64*(Cavelayer.getTileX(marker.x)))+ 32,64*(Cavelayer.getTileY(marker.y))+ 32,"Bamboo_Spear");
-				Bamboo_Spear_Trap_Sprite.anchor.setTo(0.5,0.5);
-				Bamboo_Spear_Trap_Sprite.angle = 0;
-				Bamboo_Spear_Trap_Sprite.animations.add("Bamboo-Lunge");
-				Bamboo_Spear_Trap_Sprite.animations.play("Bamboo-Lunge",10,true);
+				createBambooSpearTrap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y));
 			}
-			else if(currentTrap == 3)
+			else if(currentTrap == 3 && checkMapOverlap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)))
 			{
-				Eel_Trap_Sprite = game.add.sprite((64*(Cavelayer.getTileX(marker.x))) + 32,64*(Cavelayer.getTileY(marker.y)) + 32,"Eel_Trap");
-				Eel_Trap_Sprite.anchor.setTo(0.5,0.5);
-				Eel_Trap_Sprite.animations.add("Idle-Trap");
-				Eel_Trap_Sprite.animations.play("Idle-Trap",10,true);
+				createEelTrap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y));
 			}
 		}
 	}
@@ -350,6 +329,63 @@ function checkWaypoint()
 			}
 		}
 	}
+}
+
+function checkMapOverlap(pointx, pointy)
+{
+	if(pointx > 1 && pointx < 12)
+	{
+		if (FloorMap.getTile(pointx, pointy).index != 11 && FloorMap.getTile(pointx, pointy).index !=5 && checkTrapOverlap(pointx, pointy))
+			return true;
+			
+		else
+			return false;
+	}
+			
+	else
+		return false;
+	
+}
+
+function checkTrapOverlap(pointx, pointy)
+{
+	var aa = true;
+	for (var i = trapArray.length - 1; i >= 0; i --)
+	{
+		if (trapArray[i] == FloorMap.getTile(pointx, pointy))
+			aa = false;
+	}
+	
+	return aa;
+}
+
+function createHappyWallTrap(pointx, pointy)
+{
+	happy_wall_sprite = game.add.sprite(64 * pointx +32, 64 * pointy + 32,"Happy-Wall");
+	happy_wall_sprite.anchor.setTo(0.5,0.5);
+	happy_wall_sprite.angle = 0;
+	happy_wall_sprite.animations.add("Wall-Smash");
+	happy_wall_sprite.animations.play("Wall-Smash",15,true);
+	trapArray.push(FloorMap.getTile(pointx, pointy));
+}
+
+function createBambooSpearTrap(pointx, pointy)
+{
+	Bamboo_Spear_Trap_Sprite = game.add.sprite(64 * pointx + 32, 64 * pointy + 32,"Bamboo_Spear");
+	Bamboo_Spear_Trap_Sprite.anchor.setTo(0.5,0.5);
+	Bamboo_Spear_Trap_Sprite.angle = 0;
+	Bamboo_Spear_Trap_Sprite.animations.add("Bamboo-Lunge");
+	Bamboo_Spear_Trap_Sprite.animations.play("Bamboo-Lunge",10,true);
+	trapArray.push(FloorMap.getTile(pointx, pointy));
+}
+
+function createEelTrap(pointx, pointy)
+{
+	Eel_Trap_Sprite = game.add.sprite(64 * pointx + 32, 64 * pointy + 32,"Eel_Trap");
+	Eel_Trap_Sprite.anchor.setTo(0.5,0.5);
+	Eel_Trap_Sprite.animations.add("Idle-Trap");
+	Eel_Trap_Sprite.animations.play("Idle-Trap",10,true);
+	trapArray.push(FloorMap.getTile(pointx, pointy));
 }
 </script>
 </div>
