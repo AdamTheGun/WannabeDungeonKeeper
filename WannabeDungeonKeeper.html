@@ -77,17 +77,20 @@ function gameDefinitions(){
 	var tileX = 4;
 	var tileY = 4;
 	
+	// Not needed, saved this just in case we need it in the future
+	/*
 	var movementIndex = 0;
-	
+
 	var mapOneWaypointsX = [10, 5, 5, 10, 10, 6, 6];
 	var mapOneWaypointsY = [6, 6, 4, 4, 1, 1, 1];
-	
+
 	var direction = [0,3,0,1,0,3,4]; // Next valid direction 0 - North ; 1 - East ; 2 - South ; 3 - West ; 4 - Reached treasure room
 	var mapOneAngle = [180, 90, 180, 270, 180, 90, 90];
 	var mapOneMovementX = [0, -100, 0, 100, 0, -100, 0];
 	var mapOneMovementY = [-100, 0, -100, 0, -100, 0, 0];
-	
-	var errorCheck = 0;
+	*/
+
+	var tileTest;
 	
 	var MainMenu = function(game){};
 	MainMenu.prototype = {
@@ -211,7 +214,7 @@ function gameDefinitions(){
 			
 			Goblin_Sprite = game.add.sprite((64*11)-32,(64*10)-32,"Goblin");
 			Goblin_Sprite.anchor.setTo(0.5,0.5);
-			Goblin_Sprite.angle = mapOneAngle[movementIndex];
+			Goblin_Sprite.angle = 180;
 			Goblin_Sprite.scale.x = 0.8;
 			Goblin_Sprite.scale.y = 0.8;
 			Goblin_Sprite.animations.add("GoblinWalk", [0,1,2,3], 4, true);
@@ -252,6 +255,8 @@ function gameDefinitions(){
 			Ferret_Sorcerer_group.add(Ferret_Sorcerer_Sprite);
 			Goblin_Sprite_group.add(Goblin_Sprite);
 			
+			// To keep work simple, enemy should always move toward north at start
+			Goblin_Sprite.body.velocity.y = -100;
 		},
 		update: function()
 		{
@@ -346,99 +351,217 @@ function gameDefinitions(){
 				enemySprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(enemySprite.angle, 300));
 			}
 			
-			Goblin_Sprite.body.velocity.x = mapOneMovementX[movementIndex];
-			Goblin_Sprite.body.velocity.y = mapOneMovementY[movementIndex];
+			//Goblin_Sprite.body.velocity.x = mapOneMovementX[movementIndex];
+			//Goblin_Sprite.body.velocity.y = mapOneMovementY[movementIndex];
 			
 			if(Goblin_Sprite.body.velocity.x > 0 || Goblin_Sprite.body.velocity.y > 0 || Goblin_Sprite.body.velocity.x < 0 || Goblin_Sprite.body.velocity.y < 0 )
 			{
 				Goblin_Sprite.animations.play("GoblinWalk",8,true);
 			}
 			
+			/*
 			if(direction[movementIndex] != 4)
 			{
 				checkWaypoint(Goblin_Sprite);
-			}
+			}*/
+			
+			checkDirection(Goblin_Sprite);
 		},
 		render: function()
 		{
 			game.debug.text('Tile X: ' + Cavelayer.getTileX(enemySprite.x), 32, 48, 'rgb(255,255,255)');
 			game.debug.text('Tile Y: ' + Cavelayer.getTileY(enemySprite.y), 32, 64, 'rgb(255,255,255)');
 			
-			game.debug.text('Movement: ' + movementIndex, 32, 96, 'rgb(255,255,255)');
+			//game.debug.text('Movement: ' + movementIndex, 32, 96, 'rgb(255,255,255)');
 			
 			game.debug.text('Goblin X: ' + Goblin_Sprite.x, 32, 112, 'rgb(255,255,255)');
 			game.debug.text('Goblin Y: ' + Goblin_Sprite.y, 32, 128, 'rgb(255,255,255)');
 			
-			game.debug.text('Speed X: ' + mapOneMovementX[movementIndex], 32, 144, 'rgb(255,255,255)');
-			game.debug.text('Speed Y: ' + mapOneMovementY[movementIndex], 32, 160, 'rgb(255,255,255)');
-			game.debug.text('Waypoint X: ' + mapOneWaypointsX[movementIndex], 32, 176, 'rgb(255,255,255)');
-			game.debug.text('Waypoint Y: ' + mapOneWaypointsY[movementIndex], 32, 192, 'rgb(255,255,255)');
+			//game.debug.text('Speed X: ' + mapOneMovementX[movementIndex], 32, 144, 'rgb(255,255,255)');
+			//game.debug.text('Speed Y: ' + mapOneMovementY[movementIndex], 32, 160, 'rgb(255,255,255)');
+			//game.debug.text('Waypoint X: ' + mapOneWaypointsX[movementIndex], 32, 176, 'rgb(255,255,255)');
+			//game.debug.text('Waypoint Y: ' + mapOneWaypointsY[movementIndex], 32, 192, 'rgb(255,255,255)');
 			
 			game.debug.text('Sprite Direction: ' + Ferret_Sorcerer_Sprite.angle, 32, 206, 'rgb(255,255,255)');
-			game.debug.text('Intended Direction: ' + mapOneAngle[movementIndex], 32, 222, 'rgb(255,255,255)');
+			//game.debug.text('Intended Direction: ' + mapOneAngle[movementIndex], 32, 222, 'rgb(255,255,255)');
 			
 			game.debug.text('F X: ' + Ferret_Sorcerer_Sprite.x, 32, 238, 'rgb(255,255,255)');
 			game.debug.text('F Y: ' + Ferret_Sorcerer_Sprite.y, 32, 254, 'rgb(255,255,255)');
-			game.debug.text('Pos X: ' + (mapOneWaypointsX[movementIndex] * 64 + 32), 32, 270, 'rgb(255,255,255)');
-			game.debug.text('Pos Y: ' + (mapOneWaypointsY[movementIndex] * 64 + 32), 32, 286, 'rgb(255,255,255)');
-			game.debug.text('Previous direction: ' + direction[movementIndex], 32, 302, 'rgb(255,255,255)');
-			
-			game.debug.text('Error Checkpoint: ' + errorCheck, 32, 318, 'rgb(255,255,255)');
-		
+			//game.debug.text('Pos X: ' + (mapOneWaypointsX[movementIndex] * 64 + 32), 32, 270, 'rgb(255,255,255)');
+			//game.debug.text('Pos Y: ' + (mapOneWaypointsY[movementIndex] * 64 + 32), 32, 286, 'rgb(255,255,255)');
+			//game.debug.text('Previous direction: ' + direction[movementIndex], 32, 302, 'rgb(255,255,255)');
+
 			game.debug.text('Current trap: ' + currentTrap, 32, 334, 'rgb(255,255,255)');
 		}
 	}
+	
+	/*
 	function checkWaypoint(sprite)
-{
-	if(Cavelayer.getTileX(sprite.x) == mapOneWaypointsX[movementIndex])
 	{
-		if(Cavelayer.getTileY(sprite.y) == mapOneWaypointsY[movementIndex])
+		if(Cavelayer.getTileX(sprite.x) == mapOneWaypointsX[movementIndex])
 		{
-			if(direction[movementIndex] == 0)
+			if(Cavelayer.getTileY(sprite.y) == mapOneWaypointsY[movementIndex])
 			{
-				if(sprite.y <= mapOneWaypointsY[movementIndex] * 64 + 32)
+				if(direction[movementIndex] == 0)
 				{
-					movementIndex++;
-					sprite.angle = mapOneAngle[movementIndex];
+					if(sprite.y <= mapOneWaypointsY[movementIndex] * 64 + 32)
+					{
+						movementIndex++;
+						sprite.angle = mapOneAngle[movementIndex];
+					}
 				}
-			}
-			else if(direction[movementIndex] == 1)
-			{
-				if(sprite.x >= mapOneWaypointsX[movementIndex] * 64 + 32)
+				else if(direction[movementIndex] == 1)
 				{
-					movementIndex++;
-					sprite.angle = mapOneAngle[movementIndex];
+					if(sprite.x >= mapOneWaypointsX[movementIndex] * 64 + 32)
+					{
+						movementIndex++;
+						sprite.angle = mapOneAngle[movementIndex];
+					}
 				}
-			}
-			else if(direction[movementIndex] == 2)
-			{
-				if(sprite.y >= mapOneWaypointsY[movementIndex] * 64 + 32)
+				else if(direction[movementIndex] == 2)
 				{
-					movementIndex++;
-					sprite.angle = mapOneAngle[movementIndex];
+					if(sprite.y >= mapOneWaypointsY[movementIndex] * 64 + 32)
+					{
+						movementIndex++;
+						sprite.angle = mapOneAngle[movementIndex];
+					}
 				}
-			}
-			else if(direction[movementIndex] == 3)
-			{
-				if(sprite.x <= mapOneWaypointsX[movementIndex] * 64 + 32)
+				else if(direction[movementIndex] == 3)
 				{
-					movementIndex++;
-					sprite.angle = mapOneAngle[movementIndex];
+					if(sprite.x <= mapOneWaypointsX[movementIndex] * 64 + 32)
+					{
+						movementIndex++;
+						sprite.angle = mapOneAngle[movementIndex];
+					}
 				}
-			}
-			else if(direction[movementIndex] == 4)
-			{
-				if(sprite.x <= mapOneWaypointsX[movementIndex] * 64 + 32)
+				else if(direction[movementIndex] == 4)
 				{
-					movementIndex++;
-					sprites.angle = mapOneAngle[movementIndex];
+					if(sprite.x <= mapOneWaypointsX[movementIndex] * 64 + 32)
+					{
+						movementIndex++;
+						sprites.angle = mapOneAngle[movementIndex];
+					}
 				}
 			}
 		}
 	}
-}
+	*/
 	
-	
+	// Pathfinding function
+	function checkDirection(sprite)
+	{
+		// Collision index = 1; path = -1
+		
+		var turn = false; // Trigger for turning
+		
+		if(sprite.body.velocity.x != 0) // check x speed for direction
+		{
+			if(sprite.body.velocity.x > 0) // Facing east
+			{
+				tileTest = CollisionMap.getTileRight(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				
+				if(tileTest == 1)
+				{
+					if(sprite.x >= (Cavelayer.getTileX(sprite.x) * 64 + 32))
+					{
+						//sprite.x = (Cavelayer.getTileX(sprite.x) * 64 + 32);
+						turn = true;
+					}
+				}
+			}
+			else // Facing west
+			{
+				tileTest = CollisionMap.getTileLeft(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				
+				if(tileTest == 1)
+				{
+					if(sprite.x <= (Cavelayer.getTileX(sprite.x) * 64 + 32))
+					{
+						turn = true;
+					}
+				}
+			}
+			
+			if(turn == true)
+			{
+				sprite.x = Math.floor(sprite.x);
+				
+				if(CollisionMap.getTileAbove(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Go north
+				{
+					sprite.angle = 180;
+					sprite.body.velocity.x = 0;
+					sprite.body.velocity.y = -100;
+				}
+				else if(CollisionMap.getTileBelow(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Or go south
+				{
+					sprite.angle = 0;
+					sprite.body.velocity.x = 0;
+					sprite.body.velocity.y = 100;
+				}
+				else // Treasure room
+				{
+					sprite.kill();
+					sprite.body.velocity.x = 0;
+					sprite.body.velocity.y = 0;
+				}
+			}
+		}
+		// check y speed for direction
+		else
+		{
+			if(sprite.body.velocity.y > 0) // Facing south
+			{
+				tileTest = CollisionMap.getTileBelow(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				
+				if(tileTest == 1)
+				{
+					if(sprite.y >= (Cavelayer.getTileY(sprite.y) * 64 + 32))
+					{
+						//sprite.y = (Cavelayer.getTileY(sprite.y) * 64 + 32);
+						turn = true;
+					}
+				}
+			}
+			else // Facing north
+			{
+				tileTest = CollisionMap.getTileAbove(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				
+				if(tileTest == 1)
+				{
+					if(sprite.y <= (Cavelayer.getTileY(sprite.y) * 64 + 32))
+					{
+						//sprite.y = (Cavelayer.getTileY(sprite.y) * 64 + 32);
+						turn = true;
+					}
+				}
+			}
+			
+			if(turn == true)
+			{
+				sprite.y = Math.floor(sprite.y);
+				
+				if(CollisionMap.getTileRight(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Go East
+				{
+					sprite.angle = 270;
+					sprite.body.velocity.x = 100;
+					sprite.body.velocity.y = 0;
+				}
+				else if(CollisionMap.getTileLeft(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1)// Or go west
+				{
+					sprite.angle = 90;
+					sprite.body.velocity.x = -100;
+					sprite.body.velocity.y = 0;
+				}
+				else // Treasure room
+				{
+					sprite.kill();
+					sprite.body.velocity.x = 0;
+					sprite.body.velocity.y = 0;
+				}
+			}
+		}
+	}
+
 	game.state.add("MainMenu",MainMenu);
 	game.state.add("firstState",Level1);
 	game.state.start("MainMenu");
