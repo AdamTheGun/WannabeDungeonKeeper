@@ -284,32 +284,10 @@ function gameDefinitions(){
 		},
 		update: function()
 		{
-<<<<<<< HEAD
-=======
-			game.physics.arcade.collide(happy_wall_sprite, Bamboo_Spear_Trap_Sprite);
-			
->>>>>>> dda8ba8752c2aaa7c87b6d618d2d78431a0a7a88
 			GoldNum.text = GoldNumCounter;
 			GoldNumCounter++;
 			
 			ChestNum.text = ChestLives;
-<<<<<<< HEAD
-=======
-			
-			if(currentTrap == 1 && checkMapOverlap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)))
-			{
-				createHappyWallTrap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y));
-			}
-			else if(currentTrap == 2 && checkMapOverlap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)))
-			{
-				createBambooSpearTrap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y));
-			}
-			else if(currentTrap == 3 && checkMapOverlap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)))
-			{
-				createEelTrap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y));
-			}
-				game.physics.arcade.collide(currentTrap, CollisionMap);
->>>>>>> dda8ba8752c2aaa7c87b6d618d2d78431a0a7a88
 	
 			marker.x = Cavelayer.getTileX(game.input.activePointer.worldX) * 64;
 			marker.y = Cavelayer.getTileY(game.input.activePointer.worldY) * 64;
@@ -433,7 +411,6 @@ function gameDefinitions(){
 		happy_wall_sprite.animations.play("Wall-Smash",15,true);
 		trapArray.push(FloorMap.getTile(pointx, pointy));
 	}
-<<<<<<< HEAD
 	
 	function checkTrapOverlap(pointx, pointy)
 	{
@@ -473,8 +450,6 @@ function gameDefinitions(){
 		trapArray.push(FloorMap.getTile(pointx, pointy));
 	}
 	
-=======
-	
 	function checkTrapOverlap(pointx, pointy)
 	{
 		var aa = true;
@@ -513,7 +488,6 @@ function gameDefinitions(){
 		trapArray.push(FloorMap.getTile(pointx, pointy));
 	}
 	
->>>>>>> dda8ba8752c2aaa7c87b6d618d2d78431a0a7a88
 	function createEelTrap(pointx, pointy)
 	{
 		Eel_Trap_Sprite = game.add.sprite(64 * pointx + 32, 64 * pointy + 32,"Eel_Trap");
