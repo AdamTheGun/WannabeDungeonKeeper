@@ -71,6 +71,7 @@ function gameDefinitions(){
 	var ChestLivesSprite;
 	var GoldNum;
 	var ChestNum;
+	var health = 10;
 
 	<!-- Sprites END-->
 	
@@ -284,22 +285,11 @@ function gameDefinitions(){
 		},
 		update: function()
 		{
-<<<<<<< HEAD
-=======
-			game.physics.arcade.collide(happy_wall_sprite, Bamboo_Spear_Trap_Sprite);
-			
->>>>>>> b4cf447e8db20b3f781c3194d023f3f9e2577e72
 			GoldNum.text = GoldNumCounter;
 			GoldNumCounter++;
 			
 			ChestNum.text = ChestLives;
-<<<<<<< HEAD
-=======
 			
-			
-			game.physics.arcade.collide(currentTrap, CollisionMap);
->>>>>>> b4cf447e8db20b3f781c3194d023f3f9e2577e72
-	
 			marker.x = Cavelayer.getTileX(game.input.activePointer.worldX) * 64;
 			marker.y = Cavelayer.getTileY(game.input.activePointer.worldY) * 64;
 			
@@ -381,6 +371,8 @@ function gameDefinitions(){
 			}*/
 			
 			checkDirection(Goblin_Sprite);
+			
+			damage();
 		},
 		render: function()
 		{
@@ -406,7 +398,7 @@ function gameDefinitions(){
 			//game.debug.text('Pos Y: ' + (mapOneWaypointsY[movementIndex] * 64 + 32), 32, 286, 'rgb(255,255,255)');
 			//game.debug.text('Previous direction: ' + direction[movementIndex], 32, 302, 'rgb(255,255,255)');
 
-			game.debug.text('Current trap: ' + currentTrap, 32, 334, 'rgb(255,255,255)');
+			game.debug.text('Current health: ' + health, 32, 334, 'rgb(255,255,255)');
 		}
 	}
 	function createHappyWallTrap(pointx, pointy)
@@ -453,11 +445,6 @@ function gameDefinitions(){
 		
 	}
 	
-	
-<<<<<<< HEAD
-=======
-	
->>>>>>> b4cf447e8db20b3f781c3194d023f3f9e2577e72
 	function checkTrapOverlap(pointx, pointy)
 	{
 		var aa = true;
@@ -519,6 +506,19 @@ function gameDefinitions(){
 		trapArray.push(FloorMap.getTile(pointx, pointy));
 	}
 
+	function damage()
+	{
+		var boundA = Goblin_Sprite.getBounds();
+		
+		var boundB = Eel_Trap_Sprite.getBounds();
+			
+		for (var i = trapArray.length - 1; i >= 0; i --)
+		{
+			if (Phaser.Rectangle.intersects(boundA, boundB))
+				health -= 0.1;
+		}
+	}
+	
 	/*
 	function checkWaypoint(sprite)
 	{
@@ -695,8 +695,6 @@ function gameDefinitions(){
 		game.state.start("firstState");
 	}
 }
-
-
 
 function gameLoop()
 {
