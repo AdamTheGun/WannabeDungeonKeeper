@@ -41,10 +41,12 @@ WANNABE DUNGEON KEEPER
 var game = new Phaser.Game(896, 640, Phaser.CANVAS,"Game" ,{ create: gameDefinitions, update: gameLoop });
 function gameDefinitions(){
 
+	var UIMarker;
 	var marker;
 	var cursors;
 	var currentTrap = 0;
 	var trapArray = new Array();
+	var trapSpriteArray = new Array();
 	
 	<!-- TileMaps Start-->
 	var Floormap;
@@ -85,7 +87,7 @@ function gameDefinitions(){
 	var Goblin_Sprite_group;
 	
 	
-	var GoldNumCounter = 0;
+	var GoldNumCounter = 1000;
 	var ChestLives = 30;
 	var UITextStyle = {font: "18px Charlemagne Std",fill:"#d39e17",align:"center"};
 	var errorCheck = 0;
@@ -286,12 +288,15 @@ function gameDefinitions(){
 		update: function()
 		{
 			GoldNum.text = GoldNumCounter;
-			GoldNumCounter++;
 			
 			ChestNum.text = ChestLives;
 			
 			marker.x = Cavelayer.getTileX(game.input.activePointer.worldX) * 64;
 			marker.y = Cavelayer.getTileY(game.input.activePointer.worldY) * 64;
+			
+			UIMarker = game.add.graphics();
+			UIMarker.x = UILayer.getTileX(game.input.activePointer.worldX) * 128;
+			UIMarker.y = UILayer.getTileY(game.input.activePointer.worldY) * 80;
 			
 			if (game.input.mousePointer.isDown)
 			{
@@ -319,7 +324,24 @@ function gameDefinitions(){
 				{
 					createEelTrap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y));
 				}
+				if(UIMap.getTile(UILayer.getTileX(UIMarker.x),UILayer.getTileY(UIMarker.y)) !=null)
+				{
+					if(UIMap.getTile(UILayer.getTileX(UIMarker.x),UILayer.getTileY(UIMarker.y)).index == 5)
+					{
+						currentTrap = 1;
+					}
+					else if(UIMap.getTile(UILayer.getTileX(UIMarker.x),UILayer.getTileY(UIMarker.y)).index == 6)
+					{
+						currentTrap = 3;
+					}
+					else if(UIMap.getTile(UILayer.getTileX(UIMarker.x),UILayer.getTileY(UIMarker.y)).index == 7)
+					{
+						currentTrap = 2;
+					}
+				}
 			}
+			
+			
 			
 			for(var i = 0;i<Eel_Trap_group.countLiving();i++)
 			{
@@ -361,9 +383,34 @@ function gameDefinitions(){
 			
 			if(Goblin_Sprite.body.velocity.x > 0 || Goblin_Sprite.body.velocity.y > 0 || Goblin_Sprite.body.velocity.x < 0 || Goblin_Sprite.body.velocity.y < 0 )
 			{
-				Goblin_Sprite.animations.play("GoblinWalk",8,true);
+				if(!checkTrapOverlap(Cavelayer.getTileX(Goblin_Sprite.x),Cavelayer.getTileY(Goblin_Sprite.y)))
+				{
+					//Goblin_Sprite.animations.stop();
+					Goblin_Sprite.animations.play("GoblinHit",16,false);
+					for (var i = trapArray.length - 1; i >= 0; i --)
+					{
+						if (trapArray[i] == FloorMap.getTile(Cavelayer.getTileX(Goblin_Sprite.x), Cavelayer.getTileY(Goblin_Sprite.y)))
+						{
+							if(trapSpriteArray[i].name == "Eel_Trap")
+							{
+								
+							}							
+							else if(trapSpriteArray[i].name == "Happy-Wall")
+							{
+								trapSpriteArray[i].animations.play("Wall-Smash",20,false);
+							}
+							else if(trapSpriteArray[i].name == "Bamboo_Spear")
+							{
+								trapSpriteArray[i].animations.play("Bamboo-Lunge",20,false);
+							}
+						}
+					}
+				}
+				else
+				{
+					Goblin_Sprite.animations.play("GoblinWalk",8,true);
+				}
 			}
-			
 			/*
 			if(direction[movementIndex] != 4)
 			{
@@ -403,18 +450,23 @@ function gameDefinitions(){
 	}
 	function createHappyWallTrap(pointx, pointy)
 	{
-		if(happy_wall_group==null)
-		{
-			happy_wall_group = game.add.group();	
+		if(GoldNumCounter >=100){
+			if(happy_wall_group==null)
+			{
+				happy_wall_group = game.add.group();	
+			}
+			happy_wall_sprite = game.add.sprite(64 * pointx +32, 64 * pointy + 32,"Happy-Wall");
+			happy_wall_sprite.name = "Happy-Wall";
+			happy_wall_sprite.anchor.setTo(0.5,0.5);
+			happy_wall_sprite.z = 1;
+			happy_wall_sprite.angle = 0;
+			happy_wall_sprite.animations.add("Wall-Smash");
+			//happy_wall_sprite.animations.play("Wall-Smash",15,true);
+			happy_wall_group.add(happy_wall_sprite);
+			trapSpriteArray.push(happy_wall_sprite);
+			GoldNumCounter -= 100;
+			trapArray.push(FloorMap.getTile(pointx, pointy));
 		}
-		happy_wall_sprite = game.add.sprite(64 * pointx +32, 64 * pointy + 32,"Happy-Wall");
-		happy_wall_sprite.anchor.setTo(0.5,0.5);
-		happy_wall_sprite.z = 1;
-		happy_wall_sprite.angle = 0;
-		happy_wall_sprite.animations.add("Wall-Smash");
-		happy_wall_sprite.animations.play("Wall-Smash",15,true);
-		happy_wall_group.add(happy_wall_sprite);
-		trapArray.push(FloorMap.getTile(pointx, pointy));
 	}
 	
 	function checkTrapOverlap(pointx, pointy)
@@ -455,55 +507,49 @@ function gameDefinitions(){
 		}
 		
 		return aa;
-	}
-	
-	function checkMapOverlap(pointx, pointy)
-	{
-		if(pointx > 1 && pointx < 12)
-		{
-			if (FloorMap.getTile(pointx, pointy).index != 11 && FloorMap.getTile(pointx, pointy).index !=5 && checkTrapOverlap(pointx, pointy))
-				return true;
-				
-			else
-				return false;
-		}
-				
-		else
-			return false;
-		
 	}
 	
 	function createBambooSpearTrap(pointx, pointy)
 	{
-		if(Bamboo_Spear_Trap_group==null)
-		{
-			Bamboo_Spear_Trap_group = game.add.group();	
+		if(GoldNumCounter >=150){
+			if(Bamboo_Spear_Trap_group==null)
+			{
+				Bamboo_Spear_Trap_group = game.add.group();	
+			}
+			Bamboo_Spear_Trap_Sprite = game.add.sprite(64 * pointx + 32, 64 * pointy + 32,"Bamboo_Spear");
+			Bamboo_Spear_Trap_Sprite.name = "Bamboo_Spear";
+			Bamboo_Spear_Trap_Sprite.anchor.setTo(0.5,0.5);
+			Bamboo_Spear_Trap_Sprite.angle = 0;
+			Bamboo_Spear_Trap_Sprite.z = 1;
+			Bamboo_Spear_Trap_Sprite.animations.add("Bamboo-Lunge");
+			//Bamboo_Spear_Trap_Sprite.animations.play("Bamboo-Lunge",10,true);
+			Bamboo_Spear_Trap_group.add(Bamboo_Spear_Trap_Sprite);
+			trapSpriteArray.push(Bamboo_Spear_Trap_Sprite);
+			GoldNumCounter -= 150;
+			trapArray.push(FloorMap.getTile(pointx, pointy));
 		}
-		Bamboo_Spear_Trap_Sprite = game.add.sprite(64 * pointx + 32, 64 * pointy + 32,"Bamboo_Spear");
-		Bamboo_Spear_Trap_Sprite.anchor.setTo(0.5,0.5);
-		Bamboo_Spear_Trap_Sprite.angle = 0;
-		Bamboo_Spear_Trap_Sprite.z = 1;
-		Bamboo_Spear_Trap_Sprite.animations.add("Bamboo-Lunge");
-		Bamboo_Spear_Trap_Sprite.animations.play("Bamboo-Lunge",10,true);
-		Bamboo_Spear_Trap_group.add(Bamboo_Spear_Trap_Sprite);
-		trapArray.push(FloorMap.getTile(pointx, pointy));
 	}
 	
 	function createEelTrap(pointx, pointy)
 	{
-		if(Eel_Trap_group==null)
-		{
-			Eel_Trap_group = game.add.group();	
+		if(GoldNumCounter >=150){
+			if(Eel_Trap_group==null)
+			{
+				Eel_Trap_group = game.add.group();	
+			}
+			Eel_Trap_Sprite = game.add.sprite(64 * pointx + 32, 64 * pointy + 32,"Eel_Trap");
+			Eel_Trap_Sprite.name = "Eel_Trap";
+			Eel_Trap_Sprite.anchor.setTo(0.5,0.5);
+			Eel_Trap_Sprite.scale.x = 0.8;
+			Eel_Trap_Sprite.scale.y = 0.8;
+			Eel_Trap_Sprite.z =1;
+			Eel_Trap_Sprite.animations.add("Idle-Trap");
+			Eel_Trap_Sprite.animations.play("Idle-Trap",10,true);
+			Eel_Trap_group.add(Eel_Trap_Sprite);
+			trapSpriteArray.push(Eel_Trap_Sprite);
+			GoldNumCounter -= 150;
+			trapArray.push(FloorMap.getTile(pointx, pointy));
 		}
-		Eel_Trap_Sprite = game.add.sprite(64 * pointx + 32, 64 * pointy + 32,"Eel_Trap");
-		Eel_Trap_Sprite.anchor.setTo(0.5,0.5);
-		Eel_Trap_Sprite.scale.x = 0.8;
-		Eel_Trap_Sprite.scale.y = 0.8;
-		Eel_Trap_Sprite.z =1;
-		Eel_Trap_Sprite.animations.add("Idle-Trap");
-		Eel_Trap_Sprite.animations.play("Idle-Trap",10,true);
-		Eel_Trap_group.add(Eel_Trap_Sprite);
-		trapArray.push(FloorMap.getTile(pointx, pointy));
 	}
 
 	function damage()
@@ -625,6 +671,7 @@ function gameDefinitions(){
 				else // Treasure room
 				{
 					sprite.kill();
+					ChestLives--;
 					sprite.body.velocity.x = 0;
 					sprite.body.velocity.y = 0;
 				}
@@ -679,6 +726,7 @@ function gameDefinitions(){
 				else // Treasure room
 				{
 					sprite.kill();
+					ChestLives--;
 					sprite.body.velocity.x = 0;
 					sprite.body.velocity.y = 0;
 				}

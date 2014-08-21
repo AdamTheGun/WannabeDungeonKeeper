@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="7" height="8" tilewidth="128" tileheight="80">
- <tileset firstgid="1" name="Dirt-UI-Right" tilewidth="128" tileheight="80">
-  <image source="../x64/UI/Dirt-UI-Right.png" width="128" height="160"/>
- </tileset>
- <tileset firstgid="3" name="Dirt-UI-Left" tilewidth="128" tileheight="80">
+ <tileset firstgid="1" name="Dirt-UI-Left" tilewidth="128" tileheight="80">
   <image source="../x64/UI/Dirt-UI-Left.png" width="128" height="160"/>
+ </tileset>
+ <tileset firstgid="3" name="Dirt-UI-Right" tilewidth="128" tileheight="80">
+  <image source="../x64/UI/Dirt-UI-Right.png" width="128" height="400"/>
  </tileset>
  <layer name="UILayer" width="7" height="8">
   <data encoding="base64" compression="zlib">
-   eJxjZsANWHCIMw0hOQAUkAAu
+   eJxjZMAOmIGYCYccCx45VjxybHjk2Mm0j5AcABZYADU=
   </data>
  </layer>
 </map>
