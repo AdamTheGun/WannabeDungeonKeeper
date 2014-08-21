@@ -73,7 +73,7 @@ function gameDefinitions(){
 	var ChestLivesSprite;
 	var GoldNum;
 	var ChestNum;
-	var health = 10;
+	var health = 3;
 
 	<!-- Sprites END-->
 	
@@ -398,10 +398,12 @@ function gameDefinitions(){
 							else if(trapSpriteArray[i].name == "Happy-Wall")
 							{
 								trapSpriteArray[i].animations.play("Wall-Smash",20,false);
+								damage(Goblin_Sprite,1);
 							}
 							else if(trapSpriteArray[i].name == "Bamboo_Spear")
 							{
 								trapSpriteArray[i].animations.play("Bamboo-Lunge",20,false);
+								damage(Goblin_Sprite,1);
 							}
 						}
 					}
@@ -418,8 +420,6 @@ function gameDefinitions(){
 			}*/
 			
 			checkDirection(Goblin_Sprite);
-			
-			damage();
 		},
 		render: function()
 		{
@@ -444,8 +444,6 @@ function gameDefinitions(){
 			//game.debug.text('Pos X: ' + (mapOneWaypointsX[movementIndex] * 64 + 32), 32, 270, 'rgb(255,255,255)');
 			//game.debug.text('Pos Y: ' + (mapOneWaypointsY[movementIndex] * 64 + 32), 32, 286, 'rgb(255,255,255)');
 			//game.debug.text('Previous direction: ' + direction[movementIndex], 32, 302, 'rgb(255,255,255)');
-
-			game.debug.text('Current health: ' + health, 32, 334, 'rgb(255,255,255)');
 		}
 	}
 	function createHappyWallTrap(pointx, pointy)
@@ -466,6 +464,17 @@ function gameDefinitions(){
 			trapSpriteArray.push(happy_wall_sprite);
 			GoldNumCounter -= 100;
 			trapArray.push(FloorMap.getTile(pointx, pointy));
+		}
+	}
+	
+	function damage(sprite, dmg)
+	{
+		health -= dmg/38;
+		
+		if (health <= 0)
+		{
+			sprite.destroy();
+			sprite.x =0;
 		}
 	}
 	
@@ -549,19 +558,6 @@ function gameDefinitions(){
 			trapSpriteArray.push(Eel_Trap_Sprite);
 			GoldNumCounter -= 150;
 			trapArray.push(FloorMap.getTile(pointx, pointy));
-		}
-	}
-
-	function damage()
-	{
-		var boundA = Goblin_Sprite.getBounds();
-		
-		var boundB = Eel_Trap_Sprite.getBounds();
-			
-		for (var i = trapArray.length - 1; i >= 0; i --)
-		{
-			if (Phaser.Rectangle.intersects(boundA, boundB))
-				health -= 0.1;
 		}
 	}
 	
