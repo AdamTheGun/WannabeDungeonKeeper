@@ -112,7 +112,6 @@ function gameDefinitions(){
 
 	var tileTest;
 	var trapAngle = 0;
-	var tempAngle;
 	
 	var MainMenu = function(game){};
 	MainMenu.prototype = {
@@ -760,6 +759,7 @@ function gameDefinitions(){
 	
 	function trapDirection()
 	{
+		var tempAngle = 0;
 		// tempAngle set to -1 if not allowed to build
 		
 		var mouseTop = (game.input.y <= marker.y + 32);
