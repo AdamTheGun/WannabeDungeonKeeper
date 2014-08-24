@@ -271,7 +271,8 @@ function gameDefinitions(){
 			
 			Ferret_Sorcerer_group.add(Ferret_Sorcerer_Sprite);
 			
-			game.time.events.repeat(Phaser.Timer.SECOND/2, 45, createGob, this);
+			game.time.events.repeat(Phaser.Timer.SECOND/3, 60, createGob, this);
+			game.time.events.repeat(Phaser.Timer.SECOND*30, 2, spawnWaves, this);
 		},
 		update: function()
 		{
@@ -498,6 +499,11 @@ function gameDefinitions(){
 		
 		gobArray.push(Goblin_Sprite);
 		hpArray.push(3);
+	}
+	
+	function spawnWaves()
+	{
+		game.time.events.repeat(Phaser.Timer.SECOND/3, 60, createGob, this);
 	}
 	
 	function checkTrapOverlap(pointx, pointy)
