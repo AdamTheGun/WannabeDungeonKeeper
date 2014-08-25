@@ -112,6 +112,8 @@ function gameDefinitions(){
 	var tileTest;
 	var trapAngle = 0;
 	
+	var currentMapLayer = -1;
+	
 	var MainMenu = function(game){};
 	MainMenu.prototype = {
 		preload: function()
@@ -206,6 +208,7 @@ function gameDefinitions(){
 		
 			CollisionMap.setCollision(1);
 		
+			currentMapLayer = CollisionMap.currentLayer;
 			
 			Ferret_Sorcerer_Sprite = game.add.sprite((64*11)-32,(64*10)-32,"Ferret_Sorcerer");
 			Ferret_Sorcerer_Sprite.animations.add("Ferret_Walking");
@@ -419,6 +422,7 @@ function gameDefinitions(){
 		render: function()
 		{
 			/*
+			game.debug.text('Layer: ' + currentMapLayer, 32, 32, 'rgb(255,255,255)');
 			game.debug.text('Tile X: ' + Cavelayer.getTileX(enemySprite.x), 32, 48, 'rgb(255,255,255)');
 			game.debug.text('Tile Y: ' + Cavelayer.getTileY(enemySprite.y), 32, 64, 'rgb(255,255,255)');
 			
@@ -497,6 +501,7 @@ function gameDefinitions(){
 		
 			CollisionMap.setCollision(1);
 		
+			currentMapLayer = CollisionMap.currentLayer;
 			
 			Ferret_Sorcerer_Sprite = game.add.sprite((64*11)-32,(64*10)-32,"Ferret_Sorcerer");
 			Ferret_Sorcerer_Sprite.animations.add("Ferret_Walking");
@@ -708,6 +713,7 @@ function gameDefinitions(){
 		render: function()
 		{
 			/*
+			game.debug.text('Layer: ' + currentMapLayer, 32, 32, 'rgb(255,255,255)');
 			game.debug.text('Tile X: ' + Cavelayer.getTileX(enemySprite.x), 32, 48, 'rgb(255,255,255)');
 			game.debug.text('Tile Y: ' + Cavelayer.getTileY(enemySprite.y), 32, 64, 'rgb(255,255,255)');
 			
@@ -956,7 +962,7 @@ function gameDefinitions(){
 		{
 			if(sprite.body.velocity.x > 0) // Facing east
 			{
-				tileTest = CollisionMap.getTileRight(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				tileTest = CollisionMap.getTileRight(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
 				
 				if(tileTest == 1)
 				{
@@ -969,7 +975,7 @@ function gameDefinitions(){
 			}
 			else // Facing west
 			{
-				tileTest = CollisionMap.getTileLeft(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				tileTest = CollisionMap.getTileLeft(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
 				
 				if(tileTest == 1)
 				{
@@ -984,13 +990,13 @@ function gameDefinitions(){
 			{
 				sprite.x = Math.floor(sprite.x);
 				try{
-					if(CollisionMap.getTileAbove(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Go north
+					if(CollisionMap.getTileAbove(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Go north
 					{
 						sprite.angle = 180;
 						sprite.body.velocity.x = 0;
 						sprite.body.velocity.y = -100;
 					}
-					else if(CollisionMap.getTileBelow(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Or go south
+					else if(CollisionMap.getTileBelow(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Or go south
 					{
 						sprite.angle = 0;
 						sprite.body.velocity.x = 0;
@@ -1015,7 +1021,7 @@ function gameDefinitions(){
 			try{
 			if(sprite.body.velocity.y > 0) // Facing south
 			{
-				tileTest = CollisionMap.getTileBelow(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				tileTest = CollisionMap.getTileBelow(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
 				
 				if(tileTest == 1)
 				{
@@ -1028,7 +1034,7 @@ function gameDefinitions(){
 			}
 			else // Facing north
 			{
-				tileTest = CollisionMap.getTileAbove(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				tileTest = CollisionMap.getTileAbove(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
 				
 				if(tileTest == 1)
 				{
@@ -1047,13 +1053,13 @@ function gameDefinitions(){
 			{
 				sprite.y = Math.floor(sprite.y);
 				
-				if(CollisionMap.getTileRight(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Go East
+				if(CollisionMap.getTileRight(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Go East
 				{
 					sprite.angle = 270;
 					sprite.body.velocity.x = 100;
 					sprite.body.velocity.y = 0;
 				}
-				else if(CollisionMap.getTileLeft(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1)// Or go west
+				else if(CollisionMap.getTileLeft(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1)// Or go west
 				{
 					sprite.angle = 90;
 					sprite.body.velocity.x = -100;
@@ -1078,15 +1084,10 @@ function gameDefinitions(){
 		var mouseTop = (game.input.y <= marker.y + 32);
 		var mouseLeft = (game.input.x <= marker.x + 32);
 		
-		var tileTop = CollisionMap.getTileAbove(0, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
-		try{
-			var tileBelow = CollisionMap.getTileBelow(0, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
-		}catch(e)
-		{
-			
-		}
-		var tileLeft = CollisionMap.getTileLeft(0, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
-		var tileRight = CollisionMap.getTileRight(0, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
+		var tileTop = CollisionMap.getTileAbove(currentMapLayer, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
+		var tileBelow = CollisionMap.getTileBelow(currentMapLayer, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
+		var tileLeft = CollisionMap.getTileLeft(currentMapLayer, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
+		var tileRight = CollisionMap.getTileRight(currentMapLayer, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
 		
 		if(tileTop == 1 && tileBelow == 1)
 		{
