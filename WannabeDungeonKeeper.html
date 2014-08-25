@@ -96,7 +96,6 @@ function gameDefinitions(){
 	var background;
 	var GameLogo;
 	var playButtonSprite;
-	var settingsButtonSprite;
 	// Not needed, saved this just in case we need it in the future
 	/*
 	var movementIndex = 0;
@@ -120,7 +119,6 @@ function gameDefinitions(){
 			game.load.image("MainMenuBackground","x64/MainMenu/Background.png");
 			game.load.image("GameLogo","x64/MainMenu/GameLogo.png");
 			game.load.image("PlayButton","x64/MainMenu/PlayButton.png");
-			game.load.image("SettingsButton","x64/MainMenu/SettingsButton.png");
 		},
 		create: function()
 		{
@@ -129,19 +127,14 @@ function gameDefinitions(){
 			GameLogo.scale.x = 0.635;
 			GameLogo.scale.y = 0.635;
 			playButtonSprite = game.add.sprite(448,335,"PlayButton");
-			settingsButtonSprite = game.add.sprite(448,445,"SettingsButton");
 			
 			playButtonSprite.scale.x = 0.8;
 			playButtonSprite.scale.y = 0.8;
 			
-			settingsButtonSprite.scale.x = 0.8;
-			settingsButtonSprite.scale.y = 0.8;
 			
 			playButtonSprite.anchor.set(0.5);
-			settingsButtonSprite.anchor.set(0.5);
 			
 			playButtonSprite.inputEnabled = true;
-			settingsButtonSprite.inputEnabled = true;
 			
 			playButtonSprite.events.onInputDown.add(playClick,this);
 		},
@@ -206,8 +199,6 @@ function gameDefinitions(){
 		
 		//	Cavelayer = MainMap.createLayer("Collisions");
 			
-			enemySprite = game.add.sprite(500,100,"Proto-Enemy");
-			enemySprite.anchor.setTo(0.5,0.5);
 			
 		//	game.camera.follow(sprite);
 		
@@ -215,15 +206,11 @@ function gameDefinitions(){
 		
 			CollisionMap.setCollision(1);
 		
-			createHappyWallTrap(7, 4);
-			
-			createBambooSpearTrap(6, 4);
-		
-			createEelTrap(8, 6);
 			
 			Ferret_Sorcerer_Sprite = game.add.sprite((64*11)-32,(64*10)-32,"Ferret_Sorcerer");
 			Ferret_Sorcerer_Sprite.animations.add("Ferret_Walking");
 			Ferret_Sorcerer_Sprite.anchor.setTo(0.5,0.5);
+			Ferret_Sorcerer_Sprite.visible = false;
 			
 			GoldCoinSprite = game.add.sprite(795,22,"GoldCoin");
 			GoldCoinSprite.anchor.set(0.5);
@@ -238,19 +225,9 @@ function gameDefinitions(){
 			GoldNum = game.add.text(830,13,'NIL',UITextStyle);
 			ChestNum = game.add.text(830,46,'NIL',UITextStyle);
 			
-			happy_wall_sprite = game.add.sprite((64*(tileX - 1)) + 32,64*(tileY + 4) + 32,"Happy-Wall");
-			happy_wall_sprite.anchor.setTo(0.5,0.5);
 		
-			Bamboo_Spear_Trap_Sprite = game.add.sprite((64*(tileX + 1)) + 32 ,64*(tileY + 4) + 32,"Bamboo_Spear");
-			Bamboo_Spear_Trap_Sprite.anchor.setTo(0.5,0.5);
-			
-			Eel_Trap_Sprite = game.add.sprite((64*(tileX + 3)) + 32 , 64*(tileY + 4) + 32,"Eel_Trap");
-			Eel_Trap_Sprite.anchor.setTo(0.5,0.5);
-		
-			game.physics.enable(enemySprite);
 			game.physics.enable(Ferret_Sorcerer_Sprite);
 			
-			cursors = game.input.keyboard.createCursorKeys();
 		
 			//game.input.onDown.add(fillTiles, this);
 			
@@ -262,7 +239,6 @@ function gameDefinitions(){
 			UIMarker.lineStyle(0, 0x000000, 0.3);
 			UIMarker.drawRect(0, 0, 64, 64);
 			
-			cursors = game.input.keyboard.createCursorKeys();
 			
 			Eel_Trap_group = game.add.group();
 			happy_wall_group = game.add.group();
@@ -346,27 +322,9 @@ function gameDefinitions(){
 				}
 			}
 		
-			game.physics.arcade.collide(enemySprite, CollisionLayer);
 			game.physics.arcade.collide(Goblin_Sprite, CollisionLayer);
 		
-			enemySprite.body.velocity.x = 0;
-			enemySprite.body.velocity.y = 0;
-			enemySprite.body.angularVelocity = 0;
-			if (cursors.left.isDown)
-			{
-				enemySprite.body.angularVelocity = -200;
-				Goblin_Sprite.animations.play("GoblinHit",16,false);
-			}
-			else if (cursors.right.isDown)
-			{
-				enemySprite.body.angularVelocity = 200;
-				Goblin_Sprite.animations.play("GoblinSwordSwing",8,false);
-			}
-		
-			if (cursors.up.isDown)
-			{
-				enemySprite.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(enemySprite.angle, 300));
-			}
+			
 			
 			//Goblin_Sprite.body.velocity.x = mapOneMovementX[movementIndex];
 			//Goblin_Sprite.body.velocity.y = mapOneMovementY[movementIndex];
@@ -432,6 +390,7 @@ function gameDefinitions(){
 		},
 		render: function()
 		{
+			/*
 			game.debug.text('Tile X: ' + Cavelayer.getTileX(enemySprite.x), 32, 48, 'rgb(255,255,255)');
 			game.debug.text('Tile Y: ' + Cavelayer.getTileY(enemySprite.y), 32, 64, 'rgb(255,255,255)');
 			
@@ -451,6 +410,7 @@ function gameDefinitions(){
 			//game.debug.text('Pos X: ' + (mapOneWaypointsX[movementIndex] * 64 + 32), 32, 270, 'rgb(255,255,255)');
 			//game.debug.text('Pos Y: ' + (mapOneWaypointsY[movementIndex] * 64 + 32), 32, 286, 'rgb(255,255,255)');
 			//game.debug.text('Previous direction: ' + direction[movementIndex], 32, 302, 'rgb(255,255,255)');
+			*/
 		}
 	}
 	
