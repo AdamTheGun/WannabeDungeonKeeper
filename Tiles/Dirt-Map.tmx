@@ -6,4 +6,9 @@
    eJxjYIAAbiIxOkCXZwViASTMSaQ+dMxGQ33saG4EYWYi9LEx4LYXnz5GLPYNxnAhRh8AwkAERg==
   </data>
  </layer>
+ <layer name="Cave-Floor2" width="14" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYIAAbiIxOqBEHzsQCyBhViL1sZFpH0wfur0gzIlHHyNUDTMWe9jw6EPGMDs5SdQHU4fuBmL1kRp/hPQBAKcQBCI=
+  </data>
+ </layer>
 </map>

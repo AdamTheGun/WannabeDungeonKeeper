@@ -112,8 +112,6 @@ function gameDefinitions(){
 	var tileTest;
 	var trapAngle = 0;
 	
-	var currentMapLayer = -1;
-	
 	var MainMenu = function(game){};
 	MainMenu.prototype = {
 		preload: function()
@@ -256,11 +254,297 @@ function gameDefinitions(){
 		
 		update: function()
 		{
-			if(currentMapLayer != CollisionMap.currentLayer)
+			GoldNum.text = GoldNumCounter;
+			
+			ChestNum.text = ChestLives;
+			
+			marker.x = Cavelayer.getTileX(game.input.activePointer.worldX) * 64;
+			marker.y = Cavelayer.getTileY(game.input.activePointer.worldY) * 64;
+			
+			UIMarker.x = UILayer.getTileX(game.input.activePointer.worldX) * 128;
+			UIMarker.y = UILayer.getTileY(game.input.activePointer.worldY) * 80;
+			
+			if (game.input.mousePointer.isDown)
 			{
-				currentMapLayer = CollisionMap.currentLayer;
+				if (Cavelayer.getTileY(marker.y) == 8 && Cavelayer.getTileX(marker.x) == 3)
+				{
+					currentTrap = 1;
+				}
+				else if (Cavelayer.getTileY(marker.y) == 8 && Cavelayer.getTileX(marker.x) == 5)
+				{
+					currentTrap = 2;
+				}
+				else if (Cavelayer.getTileY(marker.y) == 8 && Cavelayer.getTileX(marker.x) == 7)
+				{
+					currentTrap = 3;
+				}
+				
+				if(currentTrap == 1 && checkMapOverlap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)))
+				{
+					trapAngle = trapDirection();
+					createHappyWallTrap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y));
+				}
+				else if(currentTrap == 2 && checkMapOverlap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)))
+				{	
+					trapAngle = trapDirection();
+					createBambooSpearTrap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y));
+				}
+				else if(currentTrap == 3 && checkMapOverlap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)))
+				{
+					createEelTrap(Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y));
+				}
+				
+				if(UIMap.getTile(UILayer.getTileX(UIMarker.x),UILayer.getTileY(UIMarker.y)) !=null)
+				{
+					if(UIMap.getTile(UILayer.getTileX(UIMarker.x),UILayer.getTileY(UIMarker.y)).index == 5)
+					{
+						currentTrap = 1;
+					}
+					else if(UIMap.getTile(UILayer.getTileX(UIMarker.x),UILayer.getTileY(UIMarker.y)).index == 6)
+					{
+						currentTrap = 3;
+					}
+					else if(UIMap.getTile(UILayer.getTileX(UIMarker.x),UILayer.getTileY(UIMarker.y)).index == 7)
+					{
+						currentTrap = 2;
+					}
+				}
 			}
 			
+			for(var i = 0;i<Eel_Trap_group.countLiving();i++)
+			{
+				for(var o = 0;o<Goblin_Sprite_group.countLiving();o++)
+				{
+					if(Cavelayer.getTileX(Eel_Trap_group.getAt(i)) == Cavelayer.getTileX(Goblin_Sprite_group.getAt(o)))
+					{
+						Goblin_Sprite_group.getAt(o).parent.removeChild(Goblin_Sprite_group.getAt(o));	
+					}
+				}
+			}
+		
+			game.physics.arcade.collide(Goblin_Sprite, CollisionLayer);
+		
+			
+			
+			//Goblin_Sprite.body.velocity.x = mapOneMovementX[movementIndex];
+			//Goblin_Sprite.body.velocity.y = mapOneMovementY[movementIndex];
+			
+			for (var j = gobArray.length -1; j >= 0; j --)
+			{
+
+				gob = gobArray[j];
+				if(gob.body.velocity.x > 0 || gob.body.velocity.y > 0 || gob.body.velocity.x < 0 || gob.body.velocity.y < 0 )
+				{
+					if(!checkTrapOverlap(Cavelayer.getTileX(gob.x),Cavelayer.getTileY(gob.y)))
+					{
+						//Goblin_Sprite.animations.stop();
+						gob.animations.play("GoblinHit",16,false);
+						for (var i = trapArray.length - 1; i >= 0; i --)
+						{
+							if (trapArray[i] == FloorMap.getTile(Cavelayer.getTileX(gob.x), Cavelayer.getTileY(gob.y)))
+							{
+								if(trapSpriteArray[i].name == "Eel_Trap")
+								{
+									hpArray[j] -= 1/38;
+									
+									if (hpArray[j] <= 0)
+									{
+										gob.destroy();
+										GoldNumCounter +=10;
+										gob.x = 700;
+										gob.y = 600;
+									}
+								}							
+								else if(trapSpriteArray[i].name == "Happy-Wall")
+								{
+									trapSpriteArray[i].animations.play("Wall-Smash",20,false);
+									hpArray[j] -= 1/38;
+									
+									if (hpArray[j] <= 0)
+									{
+										gob.destroy();
+										GoldNumCounter +=10;
+										gob.x = 700;
+										gob.y = 600;
+									}
+								}
+								else if(trapSpriteArray[i].name == "Bamboo_Spear")
+								{
+									trapSpriteArray[i].animations.play("Bamboo-Lunge",20,false);
+									hpArray[j] -= 2/38;
+									
+									if (hpArray[j] <= 0)
+									{
+										gob.destroy();
+										GoldNumCounter +=10;
+										gob.x = 700;
+										gob.y = 600;
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						gob.animations.play("GoblinWalk",8,true);
+					}
+				}
+			}
+			/*
+			if(direction[movementIndex] != 4)
+			{
+				checkWaypoint(Goblin_Sprite);
+			}*/
+			if(ChestLives<=0)
+			{
+				Goblin_Sprite_group = null;
+				Eel_Trap_group = null;
+				happy_wall_group = null;
+				Bamboo_Spear_Trap_group = null;
+				Ferret_Sorcerer_group = null;
+				currentTrap = 0;
+				trapArray = new Array();
+				trapSpriteArray = new Array();
+				gobArray = new Array();
+				GoldNumCounter = 1200;
+				ChestLives = 30;
+				game.state.start("secondState");
+			}
+			
+			for (i = gobArray.length -1; i >= 0; i --){
+				checkDirection(gobArray[i]);
+			}
+			
+		},
+		render: function()
+		{
+			/*
+			game.debug.text('Tile X: ' + Cavelayer.getTileX(enemySprite.x), 32, 48, 'rgb(255,255,255)');
+			game.debug.text('Tile Y: ' + Cavelayer.getTileY(enemySprite.y), 32, 64, 'rgb(255,255,255)');
+			
+			game.debug.text('MouseTop: ' + (game.input.y <= marker.y + 32), 32, 96, 'rgb(255,255,255)');
+			game.debug.text('MouseLeft: ' + (game.input.x <= marker.x + 32), 32, 112, 'rgb(255,255,255)');
+			game.debug.text('Mouse X: ' + (marker.x + 32), 32, 128, 'rgb(255,255,255)');
+			game.debug.text('Mouse Y: ' + (marker.y + 32), 32, 144, 'rgb(255,255,255)');
+			//game.debug.text('Speed Y: ' + mapOneMovementY[movementIndex], 32, 160, 'rgb(255,255,255)');
+			//game.debug.text('Waypoint X: ' + mapOneWaypointsX[movementIndex], 32, 176, 'rgb(255,255,255)');
+			//game.debug.text('Waypoint Y: ' + mapOneWaypointsY[movementIndex], 32, 192, 'rgb(255,255,255)');
+			
+			game.debug.text('Sprite Direction: ' + Ferret_Sorcerer_Sprite.angle, 32, 206, 'rgb(255,255,255)');
+			//game.debug.text('Intended Direction: ' + mapOneAngle[movementIndex], 32, 222, 'rgb(255,255,255)');
+			
+			game.debug.text('F X: ' + Ferret_Sorcerer_Sprite.x, 32, 238, 'rgb(255,255,255)');
+			game.debug.text('F Y: ' + Ferret_Sorcerer_Sprite.y, 32, 254, 'rgb(255,255,255)');
+			//game.debug.text('Pos X: ' + (mapOneWaypointsX[movementIndex] * 64 + 32), 32, 270, 'rgb(255,255,255)');
+			//game.debug.text('Pos Y: ' + (mapOneWaypointsY[movementIndex] * 64 + 32), 32, 286, 'rgb(255,255,255)');
+			//game.debug.text('Previous direction: ' + direction[movementIndex], 32, 302, 'rgb(255,255,255)');
+			*/
+		}
+	}
+	var Level2 = function(game){};
+	Level2.prototype = {
+		preload: function()
+		{
+			game.load.tilemap("dirt-map2","Tiles/Dirt-Map2.json", null ,Phaser.Tilemap.TILED_JSON);
+			game.load.tilemap("inGameUI","Tiles/Game-UI.json",null,Phaser.Tilemap.TILED_JSON);
+			game.load.tilemap("CollisionTileMap","Tiles/Collision2.json",null,Phaser.Tilemap.TILED_JSON);
+			
+			game.load.image("dirt-tiles","x64/DirtFloorSheet.png");
+			game.load.image("Black-Collision","x64/Black-Collision.png")
+			game.load.image("Proto-Enemy","x64/Proto-Enemy.png");
+			game.load.image("UI-Left","x64/UI/Dirt-UI-Left.png");
+			game.load.image("UI-Right","x64/UI/Dirt-UI-Right.png");
+			game.load.image("GoldCoin","x64/UI/GoldCoin.png");
+			game.load.image("ChestLives","x64/UI/ChestLives.png");
+			
+			game.load.spritesheet("Goblin","x64/Goblin.png",52,52,16);
+			game.load.spritesheet("Happy-Wall","x64/HappyWallSheet.png", 64,64,12);
+			game.load.spritesheet("Eel_Trap","x64/Eel-Trap-Spritesheet.png", 64,64,7);
+			game.load.spritesheet("Bamboo_Spear","x64/BambooSpearTrapSheet.png", 64,64,12);
+			game.load.spritesheet("Ferret_Sorcerer","x64/Ferret-Walking-SpriteSheet.png",32,32,4);
+		},
+		create: function()
+		{
+				/*for(i = 0;i < 10;i++){
+		for(o = 0;o<10;o++){
+			game.add.sprite((i*64)+80,(o*64),"dirtblock");
+		}
+			}*/
+			game.physics.startSystem(Phaser.Physics.ARCADE);
+			
+			FloorMap = game.add.tilemap("dirt-map2");
+			UIMap = game.add.tilemap("inGameUI");
+			CollisionMap = game.add.tilemap("CollisionTileMap");
+			
+			FloorMap.addTilesetImage("DirtFloor","dirt-tiles");
+			UIMap.addTilesetImage("Dirt-UI-Left","UI-Left");
+			UIMap.addTilesetImage("Dirt-UI-Right","UI-Right");
+			CollisionMap.addTilesetImage("Black-Collision","Black-Collision");
+		//	map.addTilesetImage("Black-Collision","Black-Collision");
+			
+			Cavelayer = FloorMap.createLayer("Cave-Floor2");
+			UILayer = UIMap.createLayer("UILayer");
+			
+		
+			CollisionLayer = CollisionMap.createLayer("Collisions-DirtMap2");
+		
+		//	Cavelayer = MainMap.createLayer("Collisions");
+			
+			
+		//	game.camera.follow(sprite);
+		
+		//	game.physics.arcade.collide(enemySprite,CollisionLayer);
+		
+			CollisionMap.setCollision(1);
+		
+			
+			Ferret_Sorcerer_Sprite = game.add.sprite((64*11)-32,(64*10)-32,"Ferret_Sorcerer");
+			Ferret_Sorcerer_Sprite.animations.add("Ferret_Walking");
+			Ferret_Sorcerer_Sprite.anchor.setTo(0.5,0.5);
+			Ferret_Sorcerer_Sprite.visible = false;
+			
+			GoldCoinSprite = game.add.sprite(795,22,"GoldCoin");
+			GoldCoinSprite.anchor.set(0.5);
+			GoldCoinSprite.scale.x = 0.6;
+			GoldCoinSprite.scale.y = 0.6;
+			
+			ChestLivesSprite = game.add.sprite(795,55,"ChestLives");
+			ChestLivesSprite.anchor.set(0.5);
+			ChestLivesSprite.scale.x = 0.6;
+			ChestLivesSprite.scale.y = 0.6;
+			
+			GoldNum = game.add.text(830,13,'NIL',UITextStyle);
+			ChestNum = game.add.text(830,46,'NIL',UITextStyle);
+			
+		
+			game.physics.enable(Ferret_Sorcerer_Sprite);
+			
+		
+			//game.input.onDown.add(fillTiles, this);
+			
+			marker = game.add.graphics();
+			marker.lineStyle(2, 0x000000, 0.3);
+			marker.drawRect(0, 0, 64, 64);
+			
+			UIMarker = game.add.graphics();
+			UIMarker.lineStyle(0, 0x000000, 0.3);
+			UIMarker.drawRect(0, 0, 64, 64);
+			
+			
+			Eel_Trap_group = game.add.group();
+			happy_wall_group = game.add.group();
+			Bamboo_Spear_Trap_group = game.add.group();
+			Ferret_Sorcerer_group = game.add.group();
+			Goblin_Sprite_group = game.add.group();
+			
+			Ferret_Sorcerer_group.add(Ferret_Sorcerer_Sprite);
+			
+			game.time.events.repeat(Phaser.Timer.SECOND/3, 60, createGob2, this);
+			game.time.events.repeat(Phaser.Timer.SECOND*30, 2, spawnWaves2, this);
+		},
+		
+		update: function()
+		{
 			GoldNum.text = GoldNumCounter;
 			
 			ChestNum.text = ChestLives;
@@ -351,7 +635,15 @@ function gameDefinitions(){
 							{
 								if(trapSpriteArray[i].name == "Eel_Trap")
 								{
+									hpArray[j] -= 1/38;
 									
+									if (hpArray[j] <= 0)
+									{
+										gob.destroy();
+										GoldNumCounter +=10;
+										gob.x = 700;
+										gob.y = 600;
+									}
 								}							
 								else if(trapSpriteArray[i].name == "Happy-Wall")
 								{
@@ -361,6 +653,7 @@ function gameDefinitions(){
 									if (hpArray[j] <= 0)
 									{
 										gob.destroy();
+										GoldNumCounter +=10;
 										gob.x = 700;
 										gob.y = 600;
 									}
@@ -373,6 +666,7 @@ function gameDefinitions(){
 									if (hpArray[j] <= 0)
 									{
 										gob.destroy();
+										GoldNumCounter +=10;
 										gob.x = 700;
 										gob.y = 600;
 									}
@@ -391,13 +685,28 @@ function gameDefinitions(){
 			{
 				checkWaypoint(Goblin_Sprite);
 			}*/
+			if(ChestLives<=0)
+			{
+				Goblin_Sprite_group = null;
+				Eel_Trap_group = null;
+				happy_wall_group = null;
+				Bamboo_Spear_Trap_group = null;
+				Ferret_Sorcerer_group = null;
+				currentTrap = 0;
+				trapArray = new Array();
+				trapSpriteArray = new Array();
+				gobArray = new Array();
+				GoldNumCounter = 1200;
+				ChestLives = 30;
+				game.state.start("MainMenu");
+			}
+			
 			
 			for (i = gobArray.length -1; i >= 0; i --)
 				checkDirection(gobArray[i]);
 		},
 		render: function()
 		{
-			game.debug.text('Layer: ' + CollisionMap.currentLayer, 32, 48, 'rgb(255,255,255)');
 			/*
 			game.debug.text('Tile X: ' + Cavelayer.getTileX(enemySprite.x), 32, 48, 'rgb(255,255,255)');
 			game.debug.text('Tile Y: ' + Cavelayer.getTileY(enemySprite.y), 32, 64, 'rgb(255,255,255)');
@@ -446,10 +755,38 @@ function gameDefinitions(){
 		gobArray.push(Goblin_Sprite);
 		hpArray.push(3);
 	}
+	function createGob2()
+	{
+		if (Goblin_Sprite_group == null)
+			Goblin_Sprite_group = game.add.group();
+		
+		Goblin_Sprite = game.add.sprite((64*7)-32,(64*10)-32,"Goblin");
+		Goblin_Sprite.anchor.setTo(0.5,0.5);
+		Goblin_Sprite.angle = 180;
+		Goblin_Sprite.scale.x = 0.8;
+		Goblin_Sprite.scale.y = 0.8;
+		Goblin_Sprite.animations.add("GoblinWalk", [0,1,2,3], 4, true);
+		Goblin_Sprite.animations.add("GoblinSwordSwing", [4,5,6,7], 4, false);
+		Goblin_Sprite.animations.add("GoblinHit",[8,9,10,11,12,13,14,15],12,false);
+		//Goblin_Sprite.animations.play("GoblinSwordSwing",8,true);
+		
+		game.physics.enable(Goblin_Sprite);
+		Goblin_Sprite_group.add(Goblin_Sprite);
+			
+		// To keep work simple, enemy should always move toward north at start
+		Goblin_Sprite.body.velocity.y = -100;
+		
+		gobArray.push(Goblin_Sprite);
+		hpArray.push(3);
+	}
 	
 	function spawnWaves()
 	{
 		game.time.events.repeat(Phaser.Timer.SECOND/3, 60, createGob, this);
+	}
+	function spawnWaves2()
+	{
+		game.time.events.repeat(Phaser.Timer.SECOND/3, 60, createGob2, this);
 	}
 	
 	function checkTrapOverlap(pointx, pointy)
@@ -619,7 +956,7 @@ function gameDefinitions(){
 		{
 			if(sprite.body.velocity.x > 0) // Facing east
 			{
-				tileTest = CollisionMap.getTileRight(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				tileTest = CollisionMap.getTileRight(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
 				
 				if(tileTest == 1)
 				{
@@ -632,7 +969,7 @@ function gameDefinitions(){
 			}
 			else // Facing west
 			{
-				tileTest = CollisionMap.getTileLeft(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				tileTest = CollisionMap.getTileLeft(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
 				
 				if(tileTest == 1)
 				{
@@ -646,34 +983,39 @@ function gameDefinitions(){
 			if(turn == true)
 			{
 				sprite.x = Math.floor(sprite.x);
-				
-				if(CollisionMap.getTileAbove(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Go north
+				try{
+					if(CollisionMap.getTileAbove(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Go north
+					{
+						sprite.angle = 180;
+						sprite.body.velocity.x = 0;
+						sprite.body.velocity.y = -100;
+					}
+					else if(CollisionMap.getTileBelow(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Or go south
+					{
+						sprite.angle = 0;
+						sprite.body.velocity.x = 0;
+						sprite.body.velocity.y = 100;
+					}
+					else // Treasure room
+					{
+						sprite.kill();
+						ChestLives--;
+						sprite.body.velocity.x = 0;
+						sprite.body.velocity.y = 0;
+					}
+				}catch(e)
 				{
-					sprite.angle = 180;
-					sprite.body.velocity.x = 0;
-					sprite.body.velocity.y = -100;
-				}
-				else if(CollisionMap.getTileBelow(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Or go south
-				{
-					sprite.angle = 0;
-					sprite.body.velocity.x = 0;
-					sprite.body.velocity.y = 100;
-				}
-				else // Treasure room
-				{
-					sprite.kill();
-					ChestLives--;
-					sprite.body.velocity.x = 0;
-					sprite.body.velocity.y = 0;
+					
 				}
 			}
 		}
 		// check y speed for direction
 		else
 		{
+			try{
 			if(sprite.body.velocity.y > 0) // Facing south
 			{
-				tileTest = CollisionMap.getTileBelow(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				tileTest = CollisionMap.getTileBelow(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
 				
 				if(tileTest == 1)
 				{
@@ -686,7 +1028,7 @@ function gameDefinitions(){
 			}
 			else // Facing north
 			{
-				tileTest = CollisionMap.getTileAbove(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
+				tileTest = CollisionMap.getTileAbove(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index;
 				
 				if(tileTest == 1)
 				{
@@ -697,18 +1039,21 @@ function gameDefinitions(){
 					}
 				}
 			}
-			
+			}catch(e)
+			{
+				
+			}
 			if(turn == true)
 			{
 				sprite.y = Math.floor(sprite.y);
 				
-				if(CollisionMap.getTileRight(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Go East
+				if(CollisionMap.getTileRight(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1) // Go East
 				{
 					sprite.angle = 270;
 					sprite.body.velocity.x = 100;
 					sprite.body.velocity.y = 0;
 				}
-				else if(CollisionMap.getTileLeft(currentMapLayer,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1)// Or go west
+				else if(CollisionMap.getTileLeft(0,Cavelayer.getTileX(sprite.x),Cavelayer.getTileY(sprite.y)).index != 1)// Or go west
 				{
 					sprite.angle = 90;
 					sprite.body.velocity.x = -100;
@@ -733,10 +1078,15 @@ function gameDefinitions(){
 		var mouseTop = (game.input.y <= marker.y + 32);
 		var mouseLeft = (game.input.x <= marker.x + 32);
 		
-		var tileTop = CollisionMap.getTileAbove(currentMapLayer, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
-		var tileBelow = CollisionMap.getTileBelow(currentMapLayer, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
-		var tileLeft = CollisionMap.getTileLeft(currentMapLayer, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
-		var tileRight = CollisionMap.getTileRight(currentMapLayer, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
+		var tileTop = CollisionMap.getTileAbove(0, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
+		try{
+			var tileBelow = CollisionMap.getTileBelow(0, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
+		}catch(e)
+		{
+			
+		}
+		var tileLeft = CollisionMap.getTileLeft(0, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
+		var tileRight = CollisionMap.getTileRight(0, Cavelayer.getTileX(marker.x), Cavelayer.getTileY(marker.y)).index;
 		
 		if(tileTop == 1 && tileBelow == 1)
 		{
@@ -837,6 +1187,7 @@ function gameDefinitions(){
 
 	game.state.add("MainMenu",MainMenu);
 	game.state.add("firstState",Level1);
+	game.state.add("secondState",Level2);
 	game.state.start("MainMenu");
 	
 	function playClick()
